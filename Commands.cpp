@@ -175,6 +175,10 @@ BuiltInCommand::BuiltInCommand(const char* cmd_line)
 ShowPidCommand::ShowPidCommand(const char* cmd_line)
   :BuiltInCommand(cmd_line);{}
 
-ShowPidCommand::execute(){
+  
+ShowPidCommand::ShowPidCommand(const char* cmd_line)
+  :BuiltInCommand(cmd_line);{}
+
+ChangeDirCommand::execute(){
   std::cout << "smash pid is "<< getpid();
 }
