@@ -9,6 +9,7 @@
 class Command {
   const std::string m_cmd_line;
   const std::string m_first_word;
+  int m_process_id;
 
 // TODO: Add your data members
  public:
@@ -105,11 +106,16 @@ class JobsList {
    ~JobEntry() = default ;
 
   };
+  int m_min_unused;
+  std::vector<int, JobEntry> m_jobs;
  // TODO: Add your data members
  public:
-  JobsList();
-  ~JobsList();
-  void addJob(Command* cmd, bool isStopped = false);
+  JobsList() :m_jobs(), m_min_unused(1){}
+  ~JobsList() = default
+  void addJob(Command* cmd, bool isStopped = false){
+    m_jobs.insert(m_min_unused, JobEntry(m_min_unused, cmd -> m_process_id))
+
+  }
   void printJobsList();
   void killAllJobs();
   void removeFinishedJobs();

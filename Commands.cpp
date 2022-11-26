@@ -128,7 +128,7 @@ if (*cmd_line == '\0'){
 	exit(0);
 }
 
-  Command* cmd = CreateCommand(cmd_line);
+  Command* cmd = CreateCommand(cmd_line, getpid());
   cmd -> execute();
 
   
