@@ -119,7 +119,14 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 
 void SmallShell::executeCommand(const char *cmd_line) {
 
-
+	
+if (*cmd_line == '\r' || *cmd_line == '\n'){
+	std::cout << std::endl;
+   	return;
+}
+if (*cmd_line == '\0'){
+	exit(0);
+}
 
   Command* cmd = CreateCommand(cmd_line);
   cmd -> execute();
