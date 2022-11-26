@@ -194,5 +194,5 @@ ChpromptCommand::ChpromptCommand(const char* cmd_line)
 
   
 void ShowPidCommand::execute(){
-  std::cout << "smash pid is "<< getpid();
+  std::cout << "smash pid is "<< getpid()<< std::endl;
 }
