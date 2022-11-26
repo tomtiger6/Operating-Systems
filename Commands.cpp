@@ -175,7 +175,21 @@ Command::Command(const char* cmd_line):
 BuiltInCommand::BuiltInCommand(const char* cmd_line)
   :Command(cmd_line){}
 
+
+RedirectionCommand::RedirectionCommand(const char* cmd_line)
+  :Command(cmd_line){}
+
+
+ChangeDirCommand::ChangeDirCommand(const char* cmd_line)
+  :Command(cmd_line){}
+
+GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
+  :Command(cmd_line){}
+
 ShowPidCommand::ShowPidCommand(const char* cmd_line)
+  :BuiltInCommand(cmd_line){}
+
+ChpromptCommand::ChpromptCommand(const char* cmd_line)
   :BuiltInCommand(cmd_line){}
 
   

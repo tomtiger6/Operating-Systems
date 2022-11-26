@@ -73,6 +73,15 @@ class ShowPidCommand : public BuiltInCommand {
   void execute() override;
 };
 
+
+class ChpromptCommand : public BuiltInCommand {
+ public:
+  ChpromptCommand(const char* cmd_line);
+  virtual ~ChpromptCommand() {}
+  void execute() override;
+};
+
+
 class JobsList;
 class QuitCommand : public BuiltInCommand {
 // TODO: Add your data members
