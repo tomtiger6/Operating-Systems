@@ -95,7 +95,15 @@ public:
 class JobsList {
  public:
   class JobEntry {
-   // TODO: Add your data members
+
+   int m_job_id;
+   int m_process_id;
+   time_t m_starting_time;
+
+   public:
+   JobEntry(int process_id, int job_id): m_job_id(job_id), m_process_id(process_id), m_starting_timr(time()){}
+   ~JobEntry() = default ;
+
   };
  // TODO: Add your data members
  public:
@@ -174,6 +182,7 @@ class KillCommand : public BuiltInCommand {
 
 class SmallShell {
  private:
+ 
   // TODO: Add your data members
   SmallShell();
  public:
