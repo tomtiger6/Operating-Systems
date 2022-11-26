@@ -162,23 +162,23 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 
 
-Command::Command(const char* cmd_line){
+Command::Command(const char* cmd_line):
+  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
+
+  /**
   string cmd_s = new string(_trim(string(cmd_line)));
   string firstWord = new string(cmd_s.substr(0, cmd_s.find_first_of(" \n")));
   this -> m_cmd_line = cmd_s;
   this -> m_first_word = firstWord;
-}
+}*****/
 
 BuiltInCommand::BuiltInCommand(const char* cmd_line)
-  :Command(cmd_line);{}
+  :Command(cmd_line){}
 
 ShowPidCommand::ShowPidCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line);{}
+  :BuiltInCommand(cmd_line){}
 
   
-ChangeDirCommand::ShowPidCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line);{}
-
-ShowPidCommand::execute(){
+void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid();
 }

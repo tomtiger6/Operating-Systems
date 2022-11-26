@@ -7,7 +7,7 @@
 #include <string>
 
 #define MAX_COMMAND 81
-std::string command_prompt[MAX_COMMAND] = "smash";
+std::string command_prompt = "smash" ;
 
 int main(int argc, char* argv[]) {
     if(signal(SIGTSTP , ctrlZHandler)==SIG_ERR) {
