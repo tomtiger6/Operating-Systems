@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
+#include "smash.cpp"
+#include "utils.cpp"
 
 using namespace std;
 
@@ -95,6 +97,10 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
 
   if (firstWord.compare("showpid") == 0) {
+    return new ShowPidCommand(cmd_line);
+  }
+  
+  if (firstWord.compare("chprompt") == 0) {
     return new ShowPidCommand(cmd_line);
   }
 	// For example:
@@ -202,6 +208,17 @@ ChpromptCommand::ChpromptCommand(const char* cmd_line)
   
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
+}
+
+void ChpromptCommand::execute(){
+  string arr[COMMAND_MAX_ARGS]; 
+  int numberOfArgs= stringToArray( this->m_cmd_line,arr);
+  if (numberOfArgs!=1)
+  {
+    std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
+    return; 
+  }
+  command_prompt= arr[0];
 }
 /*********FF*********/
 //some changes to check merge conflict 

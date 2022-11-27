@@ -7,12 +7,12 @@
 #define COMMAND_MAX_ARGS (20)
 
 class Command {
-  const std::string m_cmd_line;
-  const std::string m_first_word;
   int m_process_id;
 
 // TODO: Add your data members
  public:
+  const std::string m_cmd_line;
+  const std::string m_first_word;
   Command(const char* cmd_line);
   virtual ~Command() = default;
   virtual void execute() = 0;
