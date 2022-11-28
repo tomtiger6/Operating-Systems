@@ -211,8 +211,8 @@ void ShowPidCommand::execute(){
 }
 
 void ChpromptCommand::execute(){
-  string arr[COMMAND_MAX_ARGS]; 
-  int numberOfArgs= stringToArray( this->m_cmd_line,arr);
+  char* arr[COMMAND_MAX_ARGS]; 
+  int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
   if (numberOfArgs!=1)
   {
     std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
@@ -220,5 +220,40 @@ void ChpromptCommand::execute(){
   }
   command_prompt= arr[0];
 }
-/*********FF*********/
-//some changes to check merge conflict 
+
+void GetCurrDirCommand::execute()
+{
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
+  if (numberOfArgs!=0)
+  {
+    std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
+    return; 
+  }
+  char cwd[COMMAND_ARGS_MAX_LENGTH];
+  std::cout << getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
+}
+
+void ChangeDirCommand::execute()
+{
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
+  if (numberOfArgs!=1)
+  {
+    std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
+    return; 
+  }
+  char cwd[COMMAND_ARGS_MAX_LENGTH];
+  if (arr[0]=="-")
+  {
+    if (oldPwd==nullptr)
+    {
+    std::cout <<  "smash error:cd:OLDPWD not set";
+    return;
+    }
+  chdir(oldPwd);
+  return;
+  }
+  oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
+  chdir(arr[0]);
+}
