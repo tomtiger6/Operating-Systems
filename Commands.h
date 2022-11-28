@@ -7,12 +7,13 @@
 #define COMMAND_MAX_ARGS (20)
 
 class Command {
-  int m_process_id;
+  
+
 
 // TODO: Add your data members
  public:
-  const std::string m_cmd_line;
-  const std::string m_first_word;
+  std::string m_cmd_line;
+  int m_process_id;
   Command(const char* cmd_line);
   virtual ~Command() = default;
   virtual void execute() = 0;
@@ -93,47 +94,51 @@ public:
 };
 
 
+
+
+
 class JobsList {
  public:
+
   class JobEntry {
-   friend ostream& operator<<(ostream& os, const JobEntry& entry); 
+   
    int m_job_id;
-   string m_cmd_line; 
-   int m_process_id;
+   Command* m_cmd
    time_t m_starting_time;
+   bool m_is_stopped;
 
    public:
-   JobEntry(int process_id, int job_id, string cmd_line): 
-   m_job_id(job_id), m_process_id(process_id), m_starting_time(time()), m_cmd_line(cmd_line){}
+   friend ostream& operator<<(ostream& os, const JobEntry& entry); 
+   JobEntry(Command* cmd, int job_id, bool is_stopped): 
+   m_job_id(job_id), m_cmd(cmd), m_starting_time(time()), m_is_stopped(is_stopped){}
    ~JobEntry() = default ;
-
-
   };
 
-ostream& operator<<(ostream& os, const JobEntry& job)
-{
-    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " " << job.m_process_id << " " << difftime(time(), job.m_starting_time);
-    return os;
-}
 
-
-
-  std::vector<JobEntry> m_jobs;
+ std::vector<JobEntry> m_jobs;
  // TODO: Add your data members
  public:
   JobsList() :m_jobs(){}
   ~JobsList() = default
+  
   void addJob(Command* cmd, bool isStopped = false){
     if (this -> m_jobs.size() == 0){
-      m_jobs.pushback(JobEntry(1, cmd -> m_process_id));
+      m_jobs.pushback(JobEntry(cmd, 1, isStopped));
     } else  {
       int max_job_id = (this -> m_jobs.back()).m_job_id ;
-      m_jobs.pushback(JobEntry(max_job_id + 1, cmd -> m_process_id));
+      m_jobs.pushback(JobEntry(cmd -> m_process_id, max_job_id + 1, isStopped));
     }
-    
-
   }
-  void printJobsList();
+
+  void printJobsList(){
+    std::vector<JobEntry>::iterator iter;
+    for (iter; iter < m_jobs -> end(); iter++){
+      std::cout << *iter << std::endl;
+
+    }
+  }
+
+
   void killAllJobs();
   void removeFinishedJobs();
   JobEntry * getJobById(int jobId);
@@ -150,13 +155,6 @@ class JobsCommand : public BuiltInCommand {
   JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
   void execute() override{
-    vector<JobEntry>:: iterator iter;
-    for (iter; iter < m_jobs -> end(); iter++){
-      std::cout << *iter << std::endl;
-
-    }
-
-
 
 
   }

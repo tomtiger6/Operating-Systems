@@ -257,3 +257,13 @@ void ChangeDirCommand::execute()
   oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
   chdir(arr[0]);
 }
+
+
+
+
+
+ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
+{
+    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " " << job.m_process_id << " " << difftime(time(), job.m_starting_time);
+    return os;
+}
