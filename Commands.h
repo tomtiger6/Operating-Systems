@@ -96,24 +96,41 @@ public:
 class JobsList {
  public:
   class JobEntry {
-
+   friend ostream& operator<<(ostream& os, const JobEntry& entry); 
    int m_job_id;
+   string m_cmd_line; 
    int m_process_id;
    time_t m_starting_time;
 
    public:
-   JobEntry(int process_id, int job_id): m_job_id(job_id), m_process_id(process_id), m_starting_timr(time()){}
+   JobEntry(int process_id, int job_id, string cmd_line): 
+   m_job_id(job_id), m_process_id(process_id), m_starting_time(time()), m_cmd_line(cmd_line){}
    ~JobEntry() = default ;
 
+
   };
-  int m_min_unused;
-  std::vector<int, JobEntry> m_jobs;
+
+ostream& operator<<(ostream& os, const JobEntry& job)
+{
+    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " " << job.m_process_id << " " << difftime(time(), job.m_starting_time);
+    return os;
+}
+
+
+
+  std::vector<JobEntry> m_jobs;
  // TODO: Add your data members
  public:
-  JobsList() :m_jobs(), m_min_unused(1){}
+  JobsList() :m_jobs(){}
   ~JobsList() = default
   void addJob(Command* cmd, bool isStopped = false){
-    m_jobs.insert(m_min_unused, JobEntry(m_min_unused, cmd -> m_process_id))
+    if (this -> m_jobs.size() == 0){
+      m_jobs.pushback(JobEntry(1, cmd -> m_process_id));
+    } else  {
+      int max_job_id = (this -> m_jobs.back()).m_job_id ;
+      m_jobs.pushback(JobEntry(max_job_id + 1, cmd -> m_process_id));
+    }
+    
 
   }
   void printJobsList();
@@ -127,11 +144,22 @@ class JobsList {
 };
 
 class JobsCommand : public BuiltInCommand {
+  JobsList* m_jobs;
  // TODO: Add your data members
  public:
-  JobsCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~JobsCommand() {}
-  void execute() override;
+  JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+  virtual ~JobsCommand() = default;
+  void execute() override{
+    vector<JobEntry>:: iterator iter;
+    for (iter; iter < m_jobs -> end(); iter++){
+      std::cout << *iter << std::endl;
+
+    }
+
+
+
+
+  }
 };
 
 class ForegroundCommand : public BuiltInCommand {
