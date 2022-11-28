@@ -7,8 +7,7 @@
 #include <string>
 
 #define MAX_COMMAND 81
-std::string command_prompt = "smash" ;
-char* oldPwd = nullptr ;
+
 
 int main(int argc, char* argv[]) {
     if(signal(SIGTSTP , ctrlZHandler)==SIG_ERR) {
@@ -23,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     SmallShell& smash = SmallShell::getInstance();
     while(true) {
-        std::cout << command_prompt << "> ";
+        std::cout << smash.m_command_prompt << "> ";
         std::string cmd_line;
         std::getline(std::cin, cmd_line);
         smash.executeCommand(cmd_line.c_str());

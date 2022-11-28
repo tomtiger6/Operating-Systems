@@ -7,7 +7,6 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
-#include "smash.cpp"
 
 using namespace std;
 

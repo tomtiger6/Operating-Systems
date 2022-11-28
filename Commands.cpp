@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
-#include "smash.cpp"
 #include "utils.cpp"
 
 using namespace std;
@@ -134,7 +133,7 @@ if (*cmd_line == '\0'){
 	exit(0);
 }
 
-  Command* cmd = CreateCommand(cmd_line, getpid());
+  Command* cmd = this -> CreateCommand(cmd_line/*, getpid()*/);
   cmd -> execute();
 
   
@@ -194,10 +193,10 @@ RedirectionCommand::RedirectionCommand(const char* cmd_line)
 
 
 ChangeDirCommand::ChangeDirCommand(const char* cmd_line)
-  :Command(cmd_line){}
+  :BuiltInCommand(cmd_line){}
 
 GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
-  :Command(cmd_line){}
+  :BuiltInCommand(cmd_line){}
 
 ShowPidCommand::ShowPidCommand(const char* cmd_line)
   :BuiltInCommand(cmd_line){}
@@ -210,7 +209,7 @@ void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
 }
 
-void ChpromptCommand::execute(){
+void ChpromptCommand::execute(std::string* prompt){
   char* arr[COMMAND_MAX_ARGS]; 
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
   if (numberOfArgs!=1)
@@ -218,7 +217,7 @@ void ChpromptCommand::execute(){
     std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
     return; 
   }
-  command_prompt= arr[0];
+  *prompt = arr[0];
 }
 
 void GetCurrDirCommand::execute()
@@ -234,7 +233,7 @@ void GetCurrDirCommand::execute()
   std::cout << getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
 }
 
-void ChangeDirCommand::execute()
+void ChangeDirCommand::execute(char** oldPwd)
 {
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
@@ -251,10 +250,10 @@ void ChangeDirCommand::execute()
     std::cout <<  "smash error:cd:OLDPWD not set";
     return;
     }
-  chdir(oldPwd);
+  chdir(*oldPwd);
   return;
   }
-  oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
+  *oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
   chdir(arr[0]);
 }
 
@@ -264,6 +263,7 @@ void ChangeDirCommand::execute()
 
 ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
 {
-    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " " << job.m_process_id << " " << difftime(time(), job.m_starting_time);
+    os << "[" << job.m_job_id << "] " << (job.m_cmd)->m_cmd_line << " " << (job.m_cmd)->m_process_id 
+    << " " << difftime(time(NULL), job.m_starting_time);
     return os;
 }

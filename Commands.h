@@ -7,13 +7,14 @@
 #define COMMAND_MAX_ARGS (20)
 
 class Command {
+  
+
+// TODO: Add your data members
+  
+ public:
   std::string m_cmd_line;
   std::string m_first_word;
   int m_process_id;
-
-// TODO: Add your data members
- public:
-  
   Command(const char* cmd_line);
   virtual ~Command() = default;
   virtual void execute() = 0;
@@ -58,7 +59,7 @@ class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
   ChangeDirCommand(const char* cmd_line, char** plastPwd);
   virtual ~ChangeDirCommand() {}
-  void execute() override;
+  void execute(char** oldPwd) override;
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
@@ -80,7 +81,7 @@ class ChpromptCommand : public BuiltInCommand {
  public:
   ChpromptCommand(const char* cmd_line);
   virtual ~ChpromptCommand() {}
-  void execute() override;
+  void execute(std::string* prompt) override;
 };
 
 
@@ -101,17 +102,17 @@ class JobsList {
  public:
 
   class JobEntry {
-   
-   int m_job_id;
-   Command* m_cmd
+  int m_job_id;
+   Command* m_cmd;
    time_t m_starting_time;
    bool m_is_stopped;
-
    public:
-   friend ostream& operator<<(ostream& os, const JobEntry& entry); 
+   
+   friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
    JobEntry(Command* cmd, int job_id, bool is_stopped): 
-   m_job_id(job_id), m_cmd(cmd), m_starting_time(time()), m_is_stopped(is_stopped){}
+   m_job_id(job_id), m_cmd(cmd), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
    ~JobEntry() = default ;
+   friend class JobsList;
   };
 
 
@@ -119,20 +120,20 @@ class JobsList {
  // TODO: Add your data members
  public:
   JobsList() :m_jobs(){}
-  ~JobsList() = default
+  ~JobsList() = default;
   
   void addJob(Command* cmd, bool isStopped = false){
     if (this -> m_jobs.size() == 0){
-      m_jobs.pushback(JobEntry(cmd, 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd, 1, isStopped));
     } else  {
       int max_job_id = (this -> m_jobs.back()).m_job_id ;
-      m_jobs.pushback(JobEntry(cmd -> m_process_id, max_job_id + 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd, max_job_id + 1, isStopped));
     }
   }
 
   void printJobsList(){
     std::vector<JobEntry>::iterator iter;
-    for (iter; iter < m_jobs -> end(); iter++){
+    for (iter= m_jobs.begin() ; iter <= m_jobs.end(); iter++){
       std::cout << *iter << std::endl;
 
     }
@@ -218,6 +219,8 @@ class SmallShell {
   // TODO: Add your data members
   SmallShell();
  public:
+  char* oldPwd = nullptr ;
+  std::string m_command_prompt = "smash" ;
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator
