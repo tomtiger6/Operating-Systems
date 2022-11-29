@@ -33,7 +33,7 @@ class BuiltInCommand : public Command {
 class ExternalCommand : public Command {
  public:
   
-  ExternalCommand(const char* cmd_line);
+  ExternalCommand(const char* cmd_line, int process_id, JobsList* jobs);
   virtual ~ExternalCommand() {}
   void execute() override;
 };
@@ -97,9 +97,6 @@ public:
   virtual ~QuitCommand() {}
   void execute() override;
 };
-
-
-
 
 
 class JobsList {

@@ -115,6 +115,19 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   }
   
 
+
+  *to_execute = !(fork());
+  if (*to_execute){
+    return new ExternalCommand(cmd_line, getpid(), &(this -> m_jobs));
+  } else  {
+    if (is_background){
+      wait(NULL);
+    }
+    return nullptr;
+  }
+  
+
+  
 	// For example:
 /*
   string cmd_s = _trim(string(cmd_line));
