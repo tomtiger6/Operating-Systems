@@ -123,27 +123,12 @@ class JobsList {
   JobsList() :m_jobs(){}
   ~JobsList() = default;
   
-  void addJob(Command* cmd, bool isStopped = false){
-    if (this -> m_jobs.size() == 0){
-      m_jobs.push_back(JobEntry(cmd, 1, isStopped));
-    } else  {
-      int max_job_id = (this -> m_jobs.back()).m_job_id ;
-      m_jobs.push_back(JobEntry(cmd, max_job_id + 1, isStopped));
-    }
-  }
-
-  void printJobsList(){
-    std::vector<JobEntry>::iterator iter;
-    for (iter= m_jobs.begin() ; iter <= m_jobs.end(); iter++){
-      std::cout << *iter << std::endl;
-
-    }
-  }
-
+  void addJob(Command* cmd, bool isStopped = false);
+  void printJobsList();
+  JobEntry * getJobById(int jobId);
 
   void killAllJobs();
   void removeFinishedJobs();
-  JobEntry * getJobById(int jobId);
   void removeJobById(int jobId);
   JobEntry * getLastJob(int* lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
@@ -157,6 +142,7 @@ class JobsCommand : public BuiltInCommand {
   JobsCommand(const char* cmd_line, int process_id, JobsList* jobs): BuiltInCommand(cmd_line, process_id), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
   void execute() override{
+    m_jobs -> removeFinishedJobs();
     m_jobs -> printJobsList();
   }
 };
