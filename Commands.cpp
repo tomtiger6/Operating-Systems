@@ -80,7 +80,7 @@ void _removeBackgroundSign(char* cmd_line) {
 
 // TODO: Add your implementation for classes in Commands.h 
 
-SmallShell::SmallShell() {
+SmallShell::SmallShell() :m_command_prompt("smash"), m_oldPwd(nullptr), m_jobs(){
 // TODO: add your implementation
 }
 
@@ -93,17 +93,28 @@ SmallShell::~SmallShell() {
 */
 Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
 
-
+  *to_execute = true;
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+  bool is_background = _isBackgroundCommand(cmd_line);
 
+  if (firstWord.compare("chprompt") == 0) {
+    return new ChpromptCommand(cmd_line, getpid(), &(this -> m_command_prompt));
+  }
   if (firstWord.compare("showpid") == 0) {
-    return new ShowPidCommand(cmd_line);
+    return new ShowPidCommand(cmd_line, getpid());
+  }
+  if (firstWord.compare("pwd") == 0) {
+    return new GetCurrDirCommand(cmd_line, getpid());
+  }
+  if (firstWord.compare("cd") == 0) {
+    return new ChangeDirCommand(cmd_line, getpid(), &(this -> m_oldPwd));
+  }
+  if (firstWord.compare("jobs") == 0) {
+    return new JobsCommand(cmd_line, getpid(), &(this -> m_jobs));
   }
   
-  if (firstWord.compare("chprompt") == 0) {
-    return new ShowPidCommand(cmd_line);
-  }
+
 	// For example:
 /*
   string cmd_s = _trim(string(cmd_line));
@@ -264,7 +275,10 @@ void ChangeDirCommand::execute()
 
 ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
 {
-    os << "[" << job.m_job_id << "] " << (job.m_cmd)->m_cmd_line << " " << (job.m_cmd)->m_process_id 
+    os << "[" << job.m_job_id << "] " << (job.m_cmd)->m_cmd_line << " : " << (job.m_cmd)->m_process_id 
     << " " << difftime(time(NULL), job.m_starting_time);
+    if (job.m_is_stopped){
+      os << " (stopped)";
+    }
     return os;
 }

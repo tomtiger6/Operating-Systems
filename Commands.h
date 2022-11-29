@@ -157,11 +157,10 @@ class JobsCommand : public BuiltInCommand {
   JobsList* m_jobs;
  // TODO: Add your data members
  public:
-  JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+  JobsCommand(const char* cmd_line, int process_id, JobsList* jobs): BuiltInCommand(cmd_line, process_id), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
   void execute() override{
-
-
+    m_jobs -> printJobsList();
   }
 };
 
@@ -223,8 +222,11 @@ class SmallShell {
   // TODO: Add your data members
   SmallShell();
  public:
-  std::string m_oldPwd = nullptr ;
-  std::string m_command_prompt = "smash" ;
+  std::string m_oldPwd ;
+  std::string m_command_prompt ;
+  JobsList m_jobs;
+
+
   Command *CreateCommand(const char* cmd_line, bool* to_execute);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator
