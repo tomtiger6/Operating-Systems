@@ -115,19 +115,17 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   }
   
 
-
-  *to_execute = !(fork());
+  int flag = fork();
+  *to_execute = !flag;
   if (*to_execute){
-    return new ExternalCommand(cmd_line, getpid(), &(this -> m_jobs));
+    return new ExternalCommand(cmd_line, &(this -> m_jobs));
   } else  {
     if (is_background){
-      wait(NULL);
+      this -> m_jobs -> addJob(cmd_line, flag);
+    } else  {
+      waitpid(flag);
     }
-    return nullptr;
   }
-  
-
-  
 	// For example:
 /*
   string cmd_s = _trim(string(cmd_line));
@@ -200,8 +198,8 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 
 
-Command::Command(const char* cmd_line, int process_id, bool is_foreground):
-  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))), m_process_id(process_id){}
+Command::Command(const char* cmd_line):
+  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
   /**
   string cmd_s = new string(_trim(string(cmd_line)));
   string firstWord = new string(cmd_s.substr(0, cmd_s.find_first_of(" \n")));
@@ -209,25 +207,25 @@ Command::Command(const char* cmd_line, int process_id, bool is_foreground):
   this -> m_first_word = firstWord;
   **/
 
-BuiltInCommand::BuiltInCommand(const char* cmd_line, int process_id)
-  :Command(cmd_line, process_id){}
+BuiltInCommand::BuiltInCommand(const char* cmd_line)
+  :Command(cmd_line){}
 
 
-RedirectionCommand::RedirectionCommand(const char* cmd_line, int process_id)
-  :Command(cmd_line, process_id){}
+RedirectionCommand::RedirectionCommand(const char* cmd_line)
+  :Command(cmd_line){}
 
 
-ChangeDirCommand::ChangeDirCommand(const char* cmd_line, int process_id, std::string* oldPwd)
-  :BuiltInCommand(cmd_line, process_id), m_oldPwd(oldPwd){}
+ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd)
+  :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
 
-GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line, int process_id)
-  :BuiltInCommand(cmd_line, process_id){}
+GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line, pid_t process_id)
+  :BuiltInCommand(cmd_line){}
 
-ShowPidCommand::ShowPidCommand(const char* cmd_line, int process_id)
-  :BuiltInCommand(cmd_line, process_id){}
+ShowPidCommand::ShowPidCommand(const char* cmd_line)
+  :BuiltInCommand(cmd_line){}
 
-ChpromptCommand::ChpromptCommand(const char* cmd_line, int process_id, std::string* prompt)
-  :BuiltInCommand(cmd_line, process_id), m_prompt(prompt){}
+ChpromptCommand::ChpromptCommand(const char* cmd_line, std::string* prompt)
+  :BuiltInCommand(cmd_line), m_prompt(prompt){}
 
   
 void ShowPidCommand::execute(){
@@ -288,10 +286,23 @@ void ChangeDirCommand::execute()
 
 ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
 {
-    os << "[" << job.m_job_id << "] " << (job.m_cmd)->m_cmd_line << " : " << (job.m_cmd)->m_process_id 
+    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " : " << job.m_process_id 
     << " " << difftime(time(NULL), job.m_starting_time);
     if (job.m_is_stopped){
       os << " (stopped)";
     }
     return os;
+}
+
+void ExternalCommand::execute(){
+  //need normal case
+  char* args[4];
+	args[0] = (char*)"/bin/bash";
+	args[1] = (char*)"-c";
+	args[2] = (char*)cmd_line.c_str();
+	args[3] = NULL;
+	//setpgrp();
+	args[2] = _removeBackgroundSign(args[2]).c_str();
+	execvp(args[0], args);
+
 }

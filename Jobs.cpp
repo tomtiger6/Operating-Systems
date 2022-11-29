@@ -3,12 +3,12 @@
 
 
 
-void JobsList::addJob(Command* cmd, bool isStopped = false){
+void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false){
     if (this -> m_jobs.size() == 0){
-      m_jobs.push_back(JobEntry(cmd, 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd,_line, process_id, 1, isStopped));
     } else  {
       int max_job_id = (this -> m_jobs.back()).m_job_id ;
-      m_jobs.push_back(JobEntry(cmd, max_job_id + 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd,_line, process_id, max_job_id + 1, isStopped));
     }
   }
 

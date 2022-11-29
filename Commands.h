@@ -14,8 +14,8 @@ class Command {
  public:
   std::string m_cmd_line;
   std::string m_first_word;
-  int m_process_id;
-  Command(const char* cmd_line, int process_id);
+  
+  Command(const char* cmd_line);
   virtual ~Command() = default;
   virtual void execute() = 0;
   //virtual void prepare();
@@ -26,14 +26,16 @@ class Command {
 class BuiltInCommand : public Command {
 
   public:
-  BuiltInCommand(const char* cmd_line, int process_id);
+  BuiltInCommand(const char* cmd_line);
   virtual ~BuiltInCommand() {}
 };
 
 class ExternalCommand : public Command {
- public:
-  
-  ExternalCommand(const char* cmd_line, int process_id, JobsList* jobs);
+  //bool m_is_background;
+  JobsList* m_jobs;
+  public:
+  ExternalCommand(const char* cmd_line, JobsList* jobs) :
+  Command(cmd_line, process_id), m_jobs(jobs) /*, m_is_background(?)*/{}
   virtual ~ExternalCommand() {}
   void execute() override;
 };
@@ -49,7 +51,7 @@ class PipeCommand : public Command {
 class RedirectionCommand : public Command {
  // TODO: Add your data members
  public:
-  explicit RedirectionCommand(const char* cmd_line, int process_id);
+  explicit RedirectionCommand(const char* cmd_line);
   virtual ~RedirectionCommand() {}
   void execute() override;
   //void prepare() override;
@@ -59,21 +61,21 @@ class RedirectionCommand : public Command {
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
   std::string* m_oldPwd;
-  ChangeDirCommand(const char* cmd_line, int process_id, std::string* oldPwd);
+  ChangeDirCommand(const char* cmd_line, std::string* oldPwd);
   virtual ~ChangeDirCommand() {}
   void execute() override;
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
  public:
-  GetCurrDirCommand(const char* cmd_line, int process_id);
+  GetCurrDirCommand(const char* cmd_line);
   virtual ~GetCurrDirCommand() {}
   void execute() override;
 };
 
 class ShowPidCommand : public BuiltInCommand {
  public:
-  ShowPidCommand(const char* cmd_line, int process_id);
+  ShowPidCommand(const char* cmd_line);
   virtual ~ShowPidCommand() {}
   void execute() override;
 };
@@ -83,7 +85,7 @@ class ChpromptCommand : public BuiltInCommand {
  public:
  
   std::string* m_prompt;
-  ChpromptCommand(const char* cmd_line, int process_id, std::string* prompt);
+  ChpromptCommand(const char* cmd_line, std::string* prompt);
   virtual ~ChpromptCommand() {}
   void execute() override;
 };
@@ -103,15 +105,16 @@ class JobsList {
  public:
 
   class JobEntry {
-  int m_job_id;
-   Command* m_cmd;
+   int m_job_id;
+   std::string m_cmd_line;
+   pid_t m_process_id;
    time_t m_starting_time;
    bool m_is_stopped;
    public:
    
    friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
-   JobEntry(Command* cmd, int job_id, bool is_stopped): 
-   m_job_id(job_id), m_cmd(cmd), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
+   JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped): 
+   m_job_id(job_id), m_cmd_line(cmd_line), m_process_id(process_id), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
    ~JobEntry() = default ;
    friend class JobsList;
   };
@@ -123,7 +126,7 @@ class JobsList {
   JobsList() :m_jobs(){}
   ~JobsList() = default;
   
-  void addJob(Command* cmd, bool isStopped = false);
+  void addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false);
   void printJobsList();
   JobEntry * getJobById(int jobId);
 
@@ -139,7 +142,7 @@ class JobsCommand : public BuiltInCommand {
   JobsList* m_jobs;
  // TODO: Add your data members
  public:
-  JobsCommand(const char* cmd_line, int process_id, JobsList* jobs): BuiltInCommand(cmd_line, process_id), m_jobs(jobs){}
+  JobsCommand(const char* cmd_line, pid_t process_id, JobsList* jobs): BuiltInCommand(cmd_line, process_id), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
   void execute() override{
     m_jobs -> removeFinishedJobs();
