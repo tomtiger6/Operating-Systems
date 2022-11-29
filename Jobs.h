@@ -17,11 +17,13 @@ class JobsList {
  public:
 
   class JobEntry {
+
    int m_job_id;
    std::string m_cmd_line;
    pid_t m_process_id;
    time_t m_starting_time;
    bool m_is_stopped;
+
    public:
    
    friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
@@ -31,9 +33,9 @@ class JobsList {
   };
 
 
- std::vector<JobEntry> m_jobs;
- // TODO: Add your data members
- public:
+  std::vector<JobEntry> m_jobs;
+  // TODO: Add your data members
+  public:
   JobsList() :m_jobs(){}
   ~JobsList() = default;
   

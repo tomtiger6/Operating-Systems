@@ -219,15 +219,7 @@ void ChangeDirCommand::execute()
 
 
 
-ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
-{
-    os << "[" << job.m_job_id << "] " << job.m_cmd_line << " : " << job.m_process_id 
-    << " " << difftime(time(NULL), job.m_starting_time);
-    if (job.m_is_stopped){
-      os << " (stopped)";
-    }
-    return os;
-}
+
 
 void ExternalCommand::execute(){
   //need normal case
