@@ -34,19 +34,19 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   bool is_background = _isBackgroundCommand(cmd_line);
 
   if (firstWord.compare("chprompt") == 0) {
-    return new ChpromptCommand(cmd_line, getpid(), &(this -> m_command_prompt));
+    return new ChpromptCommand(cmd_line, &(this -> m_command_prompt));
   }
   if (firstWord.compare("showpid") == 0) {
-    return new ShowPidCommand(cmd_line, getpid());
+    return new ShowPidCommand(cmd_line);
   }
   if (firstWord.compare("pwd") == 0) {
-    return new GetCurrDirCommand(cmd_line, getpid());
+    return new GetCurrDirCommand(cmd_line);
   }
   if (firstWord.compare("cd") == 0) {
-    return new ChangeDirCommand(cmd_line, getpid(), &(this -> m_oldPwd));
+    return new ChangeDirCommand(cmd_line, &(this -> m_oldPwd));
   }
   if (firstWord.compare("jobs") == 0) {
-    return new JobsCommand(cmd_line, getpid(), &(this -> m_jobs));
+    return new JobsCommand(cmd_line, &(this -> m_jobs));
   }
   
 
@@ -153,7 +153,7 @@ RedirectionCommand::RedirectionCommand(const char* cmd_line)
 ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd)
   :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
 
-GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line, pid_t process_id)
+GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
   :BuiltInCommand(cmd_line){}
 
 ShowPidCommand::ShowPidCommand(const char* cmd_line)
