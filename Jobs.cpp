@@ -15,6 +15,7 @@ void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopp
   }
 
 void JobsList::printJobsList(){
+    this -> removeFinishedJobs();
     std::vector<JobEntry>::iterator iter;
     for (iter= m_jobs.begin() ; iter <= m_jobs.end(); iter++){
       std::cout << *iter << std::endl;
@@ -86,8 +87,9 @@ void JobsList::removeFinishedJobs(){
 
 
 
-
-
+void JobsList::killAllJobs(){
+  //USE SIGNALS
+}
 
 
 
