@@ -35,7 +35,7 @@ class ExternalCommand : public Command {
   JobsList* m_jobs;
   public:
   ExternalCommand(const char* cmd_line, JobsList* jobs) :
-  Command(cmd_line, process_id), m_jobs(jobs) /*, m_is_background(?)*/{}
+  Command(cmd_line), m_jobs(jobs) /*, m_is_background(?)*/{}
   virtual ~ExternalCommand() {}
   void execute() override;
 };
@@ -211,7 +211,6 @@ class SmallShell {
   std::string m_oldPwd ;
   std::string m_command_prompt ;
   JobsList m_jobs;
-
 
   Command *CreateCommand(const char* cmd_line, bool* to_execute);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor

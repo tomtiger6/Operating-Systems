@@ -1,7 +1,9 @@
 #include "command.h"
+#include "Job.h"
 
 
-
+JobsList::JobEntry::JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped): 
+   m_job_id(job_id), m_cmd_line(cmd_line), m_process_id(process_id), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
 
 void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false){
     if (this -> m_jobs.size() == 0){

@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
-#include <vector>
 #include <sstream>
 #include <sys/wait.h>
 #include <iomanip>
@@ -13,8 +12,17 @@
 using namespace std;
 
 string getFirstWord(string word);
-int stringToArray(string word, string  *arr);
 
+string _ltrim(const std::string& s);
 
+string _rtrim(const std::string& s);
+
+string _trim(const std::string& s);
+
+int _parseCommandLine(const char* cmd_line, char** args);
+
+bool _isBackgroundComamnd(const char* cmd_line);
+
+void _removeBackgroundSign(char* cmd_line);
 
 #endif //UTILS_H_
