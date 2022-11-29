@@ -1,5 +1,5 @@
 #include "command.h"
-#include "Job.h"
+#include "Jobs.h"
 
 
 JobsList::JobEntry::JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped): 
@@ -34,13 +34,55 @@ JobsList::JobEntry * JobsList::getJobById(int jobId){
 
 
 
+void JobsList::removeJobById(int jobId){
+  std::vector<JobEntry>::iterator iter;
+    for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
+      if ((*iter).m_job_id == jobID){
+        this -> m_jobs.erase(iter);
+      }
+    }
+    return nullptr;
+
+}
+
+JobsList::JobEntry * JobsList::getLastJob(int* lastJobId){
+  if (this -> m_jobs.size() == 0){
+    return nullptr;
+  }
+  if (lastJobId != NULL){
+  *lastJobId = ((this -> m_jobs).back()).m_job_id;
+  }
+  return &((this -> m_jobs).back());
+}
 
 
+JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
+  JobEntry* last = nullptr;
+  for (JobEntry iter : this -> m_jobs){
+    if ((*iter).m_is_stopped){
+      last = &(*iter);
+    }
+  }
+  if ((last != nullptr) && (jobId != NULL)){
+    *jobId = last -> m_job_id;
+  }
+  return last;
+}
 
 
-
-
-
+void JobsList::removeFinishedJobs(){
+  bool again = true;
+  while (again){
+    for (JobEntry iter : this -> m_jobs){
+      if ((*iter).isFinished()){
+        this -> m_jobs.erase(iter);
+        again = tue;
+        break;
+      }
+    }
+    again = false;
+  }
+}
 
 
 

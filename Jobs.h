@@ -12,7 +12,7 @@
 
 
 
-
+//Need to add mechanism to delete finished jobs
 class JobsList {
  public:
 
@@ -29,6 +29,7 @@ class JobsList {
    friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
    JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped);
    ~JobEntry() = default ;
+   bool isFinished(); // **TO DO** //
    friend class JobsList;
   };
 
@@ -42,12 +43,15 @@ class JobsList {
   void addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false);
   void printJobsList();
   JobEntry * getJobById(int jobId);
-
-  void killAllJobs();
-  void removeFinishedJobs();
   void removeJobById(int jobId);
   JobEntry * getLastJob(int* lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
+  void removeFinishedJobs();
+
+
+  void killAllJobs();
+  
+  
   // TODO: Add extra methods or modify exisitng ones as needed
 };
 
