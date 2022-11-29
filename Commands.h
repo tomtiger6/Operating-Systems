@@ -15,7 +15,7 @@ class Command {
   std::string m_cmd_line;
   std::string m_first_word;
   int m_process_id;
-  Command(const char* cmd_line);
+  Command(const char* cmd_line, int process_id);
   virtual ~Command() = default;
   virtual void execute() = 0;
   //virtual void prepare();
@@ -26,12 +26,13 @@ class Command {
 class BuiltInCommand : public Command {
 
   public:
-  BuiltInCommand(const char* cmd_line);
+  BuiltInCommand(const char* cmd_line, int process_id);
   virtual ~BuiltInCommand() {}
 };
 
 class ExternalCommand : public Command {
  public:
+  
   ExternalCommand(const char* cmd_line);
   virtual ~ExternalCommand() {}
   void execute() override;
@@ -48,7 +49,7 @@ class PipeCommand : public Command {
 class RedirectionCommand : public Command {
  // TODO: Add your data members
  public:
-  explicit RedirectionCommand(const char* cmd_line);
+  explicit RedirectionCommand(const char* cmd_line, int process_id);
   virtual ~RedirectionCommand() {}
   void execute() override;
   //void prepare() override;
@@ -57,21 +58,22 @@ class RedirectionCommand : public Command {
 
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
-  ChangeDirCommand(const char* cmd_line, char** plastPwd);
+  std::string* m_oldPwd;
+  ChangeDirCommand(const char* cmd_line, int process_id, std::string* oldPwd);
   virtual ~ChangeDirCommand() {}
-  void execute(char** oldPwd) override;
+  void execute() override;
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
  public:
-  GetCurrDirCommand(const char* cmd_line);
+  GetCurrDirCommand(const char* cmd_line, int process_id);
   virtual ~GetCurrDirCommand() {}
   void execute() override;
 };
 
 class ShowPidCommand : public BuiltInCommand {
  public:
-  ShowPidCommand(const char* cmd_line);
+  ShowPidCommand(const char* cmd_line, int process_id);
   virtual ~ShowPidCommand() {}
   void execute() override;
 };
@@ -79,9 +81,11 @@ class ShowPidCommand : public BuiltInCommand {
 
 class ChpromptCommand : public BuiltInCommand {
  public:
-  ChpromptCommand(const char* cmd_line);
+ 
+  std::string* m_prompt;
+  ChpromptCommand(const char* cmd_line, int process_id, std::string* prompt);
   virtual ~ChpromptCommand() {}
-  void execute(std::string* prompt) override;
+  void execute() override;
 };
 
 
@@ -219,9 +223,9 @@ class SmallShell {
   // TODO: Add your data members
   SmallShell();
  public:
-  char* oldPwd = nullptr ;
+  std::string m_oldPwd = nullptr ;
   std::string m_command_prompt = "smash" ;
-  Command *CreateCommand(const char* cmd_line);
+  Command *CreateCommand(const char* cmd_line, bool* to_execute);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator
   static SmallShell& getInstance() // make SmallShell singleton

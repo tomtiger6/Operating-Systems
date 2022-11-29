@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
-#include "utils.cpp"
+#include "utils.h"
 
 using namespace std;
 
@@ -91,7 +91,9 @@ SmallShell::~SmallShell() {
 /**
 * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
 */
-Command * SmallShell::CreateCommand(const char* cmd_line) {
+Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
+
+
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
 
@@ -124,25 +126,25 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 
 void SmallShell::executeCommand(const char *cmd_line) {
 
-	
-if (*cmd_line == '\r' || *cmd_line == '\n'){
-	std::cout << std::endl;
-   	return;
+  if (*cmd_line == '\r' || *cmd_line == '\n'){
+    std::cout << std::endl;
+      return;
+  }
+  if (*cmd_line == '\0'){
+    exit(0);
+  }
+  bool to_execute = true;
+  Command* cmd = this -> CreateCommand(cmd_line, &to_execute);
+  if (to_execute){
+    cmd -> execute();
+  }
+
+    // TODO: Add your implementation here
+    // for example:
+    // Command* cmd = CreateCommand(cmd_line);
+    // cmd->execute();
+    // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
-if (*cmd_line == '\0'){
-	exit(0);
-}
-
-  Command* cmd = this -> CreateCommand(cmd_line/*, getpid()*/);
-  cmd -> execute();
-
-  
-  // TODO: Add your implementation here
-  // for example:
-  // Command* cmd = CreateCommand(cmd_line);
-  // cmd->execute();
-  // Please note that you must fork smash process for some commands (e.g., external commands....)
-}
 
 
 
@@ -174,42 +176,41 @@ if (*cmd_line == '\0'){
 
 
 
-Command::Command(const char* cmd_line):
-  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
-
+Command::Command(const char* cmd_line, int process_id, bool is_foreground):
+  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))), m_process_id(process_id){}
   /**
   string cmd_s = new string(_trim(string(cmd_line)));
   string firstWord = new string(cmd_s.substr(0, cmd_s.find_first_of(" \n")));
   this -> m_cmd_line = cmd_s;
   this -> m_first_word = firstWord;
-}*****/
+  **/
 
-BuiltInCommand::BuiltInCommand(const char* cmd_line)
-  :Command(cmd_line){}
-
-
-RedirectionCommand::RedirectionCommand(const char* cmd_line)
-  :Command(cmd_line){}
+BuiltInCommand::BuiltInCommand(const char* cmd_line, int process_id)
+  :Command(cmd_line, process_id){}
 
 
-ChangeDirCommand::ChangeDirCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
+RedirectionCommand::RedirectionCommand(const char* cmd_line, int process_id)
+  :Command(cmd_line, process_id){}
 
-GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
 
-ShowPidCommand::ShowPidCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
+ChangeDirCommand::ChangeDirCommand(const char* cmd_line, int process_id, std::string* oldPwd)
+  :BuiltInCommand(cmd_line, process_id), m_oldPwd(oldPwd){}
 
-ChpromptCommand::ChpromptCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
+GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line, int process_id)
+  :BuiltInCommand(cmd_line, process_id){}
+
+ShowPidCommand::ShowPidCommand(const char* cmd_line, int process_id)
+  :BuiltInCommand(cmd_line, process_id){}
+
+ChpromptCommand::ChpromptCommand(const char* cmd_line, int process_id, std::string* prompt)
+  :BuiltInCommand(cmd_line, process_id), m_prompt(prompt){}
 
   
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
 }
 
-void ChpromptCommand::execute(std::string* prompt){
+void ChpromptCommand::execute(){
   char* arr[COMMAND_MAX_ARGS]; 
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
   if (numberOfArgs!=1)
@@ -217,7 +218,7 @@ void ChpromptCommand::execute(std::string* prompt){
     std::cout <<  "smash error:>\""<< this->m_first_word<<"\"";
     return; 
   }
-  *prompt = arr[0];
+  *(this -> m_prompt) = arr[0];
 }
 
 void GetCurrDirCommand::execute()
@@ -233,7 +234,7 @@ void GetCurrDirCommand::execute()
   std::cout << getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
 }
 
-void ChangeDirCommand::execute(char** oldPwd)
+void ChangeDirCommand::execute()
 {
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
@@ -245,15 +246,15 @@ void ChangeDirCommand::execute(char** oldPwd)
   char cwd[COMMAND_ARGS_MAX_LENGTH];
   if (arr[0]=="-")
   {
-    if (oldPwd==nullptr)
+    if (m_oldPwd==nullptr)
     {
     std::cout <<  "smash error:cd:OLDPWD not set";
     return;
     }
-  chdir(*oldPwd);
+  chdir(*m_oldPwd);
   return;
   }
-  *oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
+  *m_oldPwd=getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
   chdir(arr[0]);
 }
 
