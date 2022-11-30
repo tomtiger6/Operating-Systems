@@ -15,6 +15,8 @@ class SmallShell {
   pid_t m_current_foreground_pid;
   std::string m_current_foreground_cmd;
 
+  SmallShell();
+  SmallShell::~SmallShell()  = default;
   Command *CreateCommand(const char* cmd_line, bool* to_execute);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator

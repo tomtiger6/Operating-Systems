@@ -17,9 +17,7 @@ SmallShell::SmallShell() : m_oldPwd(nullptr), m_command_prompt("smash"), m_jobs(
 // TODO: add your implementation
 }
 
-SmallShell::~SmallShell() {
-// TODO: add your implementation
-}
+
 
 /**
 * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
@@ -56,7 +54,6 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
     if (is_background && !(shouldIgnoreAmpercent(firstword))){
       this -> m_jobs -> addJob(cmd_line, son_pid);
     } else  {
-      t//his -> m_current_foreground_cmd = cmd_line;
       this -> m_current_foreground_pid = son_pid;
       this -> m_current_foreground_cmd = cmd_line;
       waitpid(son_pid);
