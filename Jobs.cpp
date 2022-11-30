@@ -1,4 +1,4 @@
-#include "command.h"
+#include "Commands.h"
 #include "Jobs.h"
 
 
@@ -77,7 +77,7 @@ void JobsList::removeFinishedJobs(){
     for (JobEntry iter : this -> m_jobs){
       if ((*iter).isFinished()){
         this -> m_jobs.erase(iter);
-        again = tue;
+        again = true;
         break;
       }
     }
