@@ -27,11 +27,12 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   *to_execute = true;
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
-  bool is_background = _isBackgroundCommand(cmd_line);
+  bool is_background = _isBackgroundComamnd(cmd_line);
   int son_pid = fork();
   *to_execute = !son_pid;
 
   if (*to_execute){
+    setpgrp();
     if (firstWord.compare("chprompt") == 0) {
       return new ChpromptCommand(cmd_line, &(this -> m_command_prompt));
     }
@@ -51,7 +52,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   } 
   
   else  {
-    if (is_background && !(shouldIgnoreAmpercent(firstword))){
+    if (is_background && !(shouldNotIgnoreAmpersand(firstWord))){
       this -> m_jobs -> addJob(cmd_line, son_pid);
     } else  {
       this -> m_current_foreground_pid = son_pid;

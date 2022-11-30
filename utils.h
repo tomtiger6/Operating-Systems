@@ -25,6 +25,6 @@ bool _isBackgroundComamnd(const char* cmd_line);
 
 void _removeBackgroundSign(char* cmd_line);
 
-bool shouldNotIgnoreAmperssant (string my_str);
+bool shouldNotIgnoreAmpersand (string my_str);
 
 #endif //UTILS_H_

@@ -113,10 +113,9 @@ void ExternalCommand::execute(){
   char* args[4];
 	args[0] = (char*)"/bin/bash";
 	args[1] = (char*)"-c";
-	args[2] = (char*)cmd_line.c_str();
+  string temp=this->m_cmd_line;
+	args[2] = (char*)(temp.c_str());
 	args[3] = NULL;
-	//setpgrp();
-	args[2] = _removeBackgroundSign(args[2]).c_str();
+	_removeBackgroundSign(args[2]);
 	execvp(args[0], args);
-
 }

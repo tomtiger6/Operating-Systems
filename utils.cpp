@@ -86,7 +86,7 @@ void _removeBackgroundSign(char* cmd_line) {
   cmd_line[str.find_last_not_of(WHITESPACE, idx) + 1] = 0;
 }
 
-bool shouldNotIgnoreAmperssant (string my_str)
+bool shouldNotIgnoreAmpersand (string my_str)
 {
    const char * word = my_str.c_str();
     if (strcmp(word,"chprompt")==0)
