@@ -32,32 +32,34 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
   bool is_background = _isBackgroundCommand(cmd_line);
-
-  if (firstWord.compare("chprompt") == 0) {
-    return new ChpromptCommand(cmd_line, &(this -> m_command_prompt));
-  }
-  if (firstWord.compare("showpid") == 0) {
-    return new ShowPidCommand(cmd_line);
-  }
-  if (firstWord.compare("pwd") == 0) {
-    return new GetCurrDirCommand(cmd_line);
-  }
-  if (firstWord.compare("cd") == 0) {
-    return new ChangeDirCommand(cmd_line, &(this -> m_oldPwd));
-  }
-  if (firstWord.compare("jobs") == 0) {
-    return new JobsCommand(cmd_line, &(this -> m_jobs));
-  }
-  
-
   int flag = fork();
   *to_execute = !flag;
+
   if (*to_execute){
+    if (firstWord.compare("chprompt") == 0) {
+      return new ChpromptCommand(cmd_line, &(this -> m_command_prompt));
+    }
+    if (firstWord.compare("showpid") == 0) {
+      return new ShowPidCommand(cmd_line);
+    }
+    if (firstWord.compare("pwd") == 0) {
+      return new GetCurrDirCommand(cmd_line);
+    }
+    if (firstWord.compare("cd") == 0) {
+      return new ChangeDirCommand(cmd_line, &(this -> m_oldPwd));
+    }
+    if (firstWord.compare("jobs") == 0) {
+      return new JobsCommand(cmd_line, &(this -> m_jobs));
+    }
     return new ExternalCommand(cmd_line, &(this -> m_jobs));
-  } else  {
-    if (is_background){
+  } 
+  
+  else  {
+    if (is_background && !(shouldIgnoreAmpercent(firstword))){
       this -> m_jobs -> addJob(cmd_line, flag);
     } else  {
+      this -> m_current_foreground_cmd = cmd_line;
+      this -> m_current_foreground_pid = flag;
       waitpid(flag);
     }
   }
@@ -94,6 +96,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
   Command* cmd = this -> CreateCommand(cmd_line, &to_execute);
   if (to_execute){
     cmd -> execute();
+    delete cmd;
   }
 
     // TODO: Add your implementation here
