@@ -35,7 +35,7 @@ class ExternalCommand : public Command {
   JobsList* m_jobs;
   public:
   ExternalCommand(const char* cmd_line, JobsList* jobs) :
-  Command(cmd_line), m_jobs(jobs) /*, m_is_background(?)*/{}
+  Command(cmd_line), m_jobs(jobs){}
   virtual ~ExternalCommand() {}
   void execute() override;
 };

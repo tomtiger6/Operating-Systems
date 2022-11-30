@@ -32,8 +32,8 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
   bool is_background = _isBackgroundCommand(cmd_line);
-  int flag = fork();
-  *to_execute = !flag;
+  int son_pid = fork();
+  *to_execute = !son_pid;
 
   if (*to_execute){
     if (firstWord.compare("chprompt") == 0) {
@@ -56,11 +56,11 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
   
   else  {
     if (is_background && !(shouldIgnoreAmpercent(firstword))){
-      this -> m_jobs -> addJob(cmd_line, flag);
+      this -> m_jobs -> addJob(cmd_line, son_pid);
     } else  {
       this -> m_current_foreground_cmd = cmd_line;
-      this -> m_current_foreground_pid = flag;
-      waitpid(flag);
+      this -> m_current_foreground_pid = son_pid;
+      waitpid(son_pid);
     }
   }
 	// For example:
@@ -105,7 +105,6 @@ void SmallShell::executeCommand(const char *cmd_line) {
     // cmd->execute();
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
-
 
 
 
