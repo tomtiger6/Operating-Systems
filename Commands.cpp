@@ -7,12 +7,16 @@
 #include <iomanip>
 #include "Commands.h"
 #include "utils.h"
-
+#include "Jobs.h"
 
 using namespace std;
 
 
-
+void JobsCommand::execute() 
+  {
+    m_jobs -> removeFinishedJobs();
+    m_jobs -> printJobsList();
+  }
 
 
 Command::Command(const char* cmd_line):
@@ -84,7 +88,7 @@ void ChangeDirCommand::execute()
     return; 
   }
   char cwd[COMMAND_ARGS_MAX_LENGTH];
-  if (arr[0]=="-")
+  if (!strcmp ( arr[0],"-"))
   {
     if (m_oldPwd==nullptr)
     {

@@ -3,6 +3,7 @@
 #include "signals.h"
 #include "Commands.h"
 #include "SmallShell.h"
+#include "Jobs.h"
 using namespace std;
 
 

@@ -5,6 +5,7 @@
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
+class JobsList; 
 class Command {
   
 
@@ -91,7 +92,6 @@ class ChpromptCommand : public BuiltInCommand {
 };
 
 
-class JobsList; 
 
 
 class QuitCommand : public BuiltInCommand {
@@ -111,10 +111,7 @@ class JobsCommand : public BuiltInCommand {
  public:
   JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
-  void execute() override{
-    m_jobs -> removeFinishedJobs();
-    m_jobs -> printJobsList();
-  }
+  void execute() override;
 };
 
 class ForegroundCommand : public BuiltInCommand {

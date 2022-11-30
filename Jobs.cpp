@@ -7,10 +7,10 @@ JobsList::JobEntry::JobEntry(const std::string cmd_line, pid_t process_id, int j
 
 void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false){
     if (this -> m_jobs.size() == 0){
-      m_jobs.push_back(JobEntry(cmd,_line, process_id, 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd_line, process_id, 1, isStopped));
     } else  {
       int max_job_id = (this -> m_jobs.back()).m_job_id ;
-      m_jobs.push_back(JobEntry(cmd,_line, process_id, max_job_id + 1, isStopped));
+      m_jobs.push_back(JobEntry(cmd_line, process_id, max_job_id + 1, isStopped));
     }
   }
 
@@ -26,7 +26,7 @@ void JobsList::printJobsList(){
 JobsList::JobEntry * JobsList::getJobById(int jobId){
     std::vector<JobEntry>::iterator iter;
     for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
-      if ((*iter).m_job_id == jobID){
+      if ((*iter).m_job_id == jobId){
         return &(*iter);
       }
     }
@@ -38,11 +38,10 @@ JobsList::JobEntry * JobsList::getJobById(int jobId){
 void JobsList::removeJobById(int jobId){
   std::vector<JobEntry>::iterator iter;
     for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
-      if ((*iter).m_job_id == jobID){
+      if ((*iter).m_job_id == jobId){
         this -> m_jobs.erase(iter);
       }
     }
-    return nullptr;
 
 }
 
@@ -59,7 +58,8 @@ JobsList::JobEntry * JobsList::getLastJob(int* lastJobId){
 
 JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
   JobEntry* last = nullptr;
-  for (JobEntry iter : this -> m_jobs){
+  std::vector<JobEntry>::iterator iter;
+  for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
     if ((*iter).m_is_stopped){
       last = &(*iter);
     }
@@ -74,7 +74,8 @@ JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
 void JobsList::removeFinishedJobs(){
   bool again = true;
   while (again){
-    for (JobEntry iter : this -> m_jobs){
+    std::vector<JobEntry>::iterator iter;
+    for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
       if ((*iter).isFinished()){
         this -> m_jobs.erase(iter);
         again = true;
@@ -111,7 +112,7 @@ void JobsList::killAllJobs(){
 
 
 
-ostream& operator<<(ostream& os, const JobsList::JobEntry& job)
+std::ostream& operator<<(std::ostream& os, const JobsList::JobEntry& job)
 {
     os << "[" << job.m_job_id << "] " << job.m_cmd_line << " : " << job.m_process_id 
     << " " << difftime(time(NULL), job.m_starting_time);
