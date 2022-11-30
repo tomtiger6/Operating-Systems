@@ -5,7 +5,7 @@
 #include "Commands.h"
 #include "signals.h"
 #include <string>
-
+#include "SmallShell.h"
 #define MAX_COMMAND 81
 
 

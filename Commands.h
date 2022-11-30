@@ -60,9 +60,10 @@ class RedirectionCommand : public Command {
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
   std::string* m_oldPwd;
-  ChangeDirCommand(const char* cmd_line, std::string* oldPwd);
-  virtual ~ChangeDirCommand() {}
-  void execute() override;
+  public:
+    ChangeDirCommand(const char* cmd_line, std::string* oldPwd);
+    virtual ~ChangeDirCommand()=default;
+    void execute() override;
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
