@@ -15,7 +15,7 @@ using namespace std;
 
 // TODO: Add your implementation for classes in Commands.h 
 
-SmallShell::SmallShell() : m_oldPwd(nullptr), m_command_prompt("smash"), m_jobs(){
+SmallShell::SmallShell() : m_oldPwd(nullptr), m_command_prompt("smash"), m_jobs(), m_current_foreground_pid(0), m_current_foreground_cmd(NULL){
 // TODO: add your implementation
 }
 
@@ -58,9 +58,12 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
     if (is_background && !(shouldIgnoreAmpercent(firstword))){
       this -> m_jobs -> addJob(cmd_line, son_pid);
     } else  {
-      this -> m_current_foreground_cmd = cmd_line;
+      t//his -> m_current_foreground_cmd = cmd_line;
       this -> m_current_foreground_pid = son_pid;
+      this -> m_current_foreground_cmd = cmd_line;
       waitpid(son_pid);
+      this -> m_current_foreground_pid = 0;
+      this -> m_current_foreground_cmd = string(NULL);
     }
   }
 	// For example:
