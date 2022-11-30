@@ -2,7 +2,7 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
-
+#include "Jobs.h"
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
@@ -101,48 +101,13 @@ public:
 };
 
 
-class JobsList {
- public:
 
-  class JobEntry {
-   int m_job_id;
-   std::string m_cmd_line;
-   pid_t m_process_id;
-   time_t m_starting_time;
-   bool m_is_stopped;
-   public:
-   
-   friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
-   JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped): 
-   m_job_id(job_id), m_cmd_line(cmd_line), m_process_id(process_id), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
-   ~JobEntry() = default ;
-   friend class JobsList;
-  };
-
-
- std::vector<JobEntry> m_jobs;
- // TODO: Add your data members
- public:
-  JobsList() :m_jobs(){}
-  ~JobsList() = default;
-  
-  void addJob(const std::string cmd_line, pid_t process_id, bool isStopped = false);
-  void printJobsList();
-  JobEntry * getJobById(int jobId);
-
-  void killAllJobs();
-  void removeFinishedJobs();
-  void removeJobById(int jobId);
-  JobEntry * getLastJob(int* lastJobId);
-  JobEntry *getLastStoppedJob(int *jobId);
-  // TODO: Add extra methods or modify exisitng ones as needed
-};
 
 class JobsCommand : public BuiltInCommand {
   JobsList* m_jobs;
  // TODO: Add your data members
  public:
-  JobsCommand(const char* cmd_line, pid_t process_id, JobsList* jobs): BuiltInCommand(cmd_line, process_id), m_jobs(jobs){}
+  JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
   virtual ~JobsCommand() = default;
   void execute() override{
     m_jobs -> removeFinishedJobs();

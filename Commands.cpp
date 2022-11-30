@@ -15,7 +15,7 @@ using namespace std;
 
 // TODO: Add your implementation for classes in Commands.h 
 
-SmallShell::SmallShell() :m_command_prompt("smash"), m_oldPwd(nullptr), m_jobs(){
+SmallShell::SmallShell() : m_oldPwd(nullptr), m_command_prompt("smash"), m_jobs(){
 // TODO: add your implementation
 }
 
