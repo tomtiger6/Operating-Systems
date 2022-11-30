@@ -88,7 +88,7 @@ void _removeBackgroundSign(char* cmd_line) {
 
 bool shouldNotIgnoreAmperssant (string my_str)
 {
-   const char * word=my_str.c_str();
+   const char * word = my_str.c_str();
     if (strcmp(word,"chprompt")==0)
     {
         return true;
@@ -113,4 +113,5 @@ bool shouldNotIgnoreAmperssant (string my_str)
     {
         return true;
     }
+    return false;
 }
