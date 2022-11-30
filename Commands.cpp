@@ -14,8 +14,8 @@ using namespace std;
 
 void JobsCommand::execute() 
   {
-    m_jobs -> removeFinishedJobs();
-    m_jobs -> printJobsList();
+    (*m_jobs).removeFinishedJobs();
+    (*m_jobs).printJobsList();
   }
 
 
@@ -65,7 +65,7 @@ void ChpromptCommand::execute(){
   {
     *(this -> m_prompt)=arr[1];
   }
-  for (size_t i = 0; i < numberOfArgs; i++)
+  for (int i = 0; i < numberOfArgs; i++)
   {
     free(arr[i]);
   }
@@ -99,7 +99,7 @@ void ChangeDirCommand::execute()
   return;
   }
   chdir(arr[1]);
-   for (size_t i = 0; i < numberOfArgs; i++)
+   for (int i = 0; i < numberOfArgs; i++)
   {
     free(arr[i]);
   }
