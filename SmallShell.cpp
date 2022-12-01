@@ -60,7 +60,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line, bool* to_execute) {
     {
       this -> m_current_foreground_pid = son_pid;
       this -> m_current_foreground_cmd = cmd_line;
-      waitpid(son_pid,NULL,0);
+      waitpid(son_pid, NULL, WUNTRACED);
       this -> m_current_foreground_pid = 0;
       this -> m_current_foreground_cmd = string(NULL);
     }

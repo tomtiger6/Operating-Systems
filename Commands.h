@@ -2,14 +2,15 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
+#include <string>
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
 class JobsList; 
 
+
 class Command {
   
-
 // TODO: Add your data members
   
  public:

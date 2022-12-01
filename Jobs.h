@@ -29,7 +29,7 @@ class JobsList {
    friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
    JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped);
    ~JobEntry() = default ;
-   bool isFinished(); // **TO DO** //
+   bool isFinished(); /* CANNOT BE CALLED A SECOND TIME ON A TERMINATE PROCESS*/
    friend class JobsList;
   };
 
