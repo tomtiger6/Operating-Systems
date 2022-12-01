@@ -7,7 +7,7 @@
 #define COMMAND_MAX_ARGS (20)
 
 class JobsList; 
-
+class SmallShell;
 
 class Command {
   
@@ -118,9 +118,9 @@ class JobsCommand : public BuiltInCommand {
 
 class ForegroundCommand : public BuiltInCommand {
  // TODO: Add your data members
- JobsList* m_jobs;
+ SmallShell* m_smash;
  public:
-  ForegroundCommand(const char* cmd_line, JobsList* jobs);
+  ForegroundCommand(const char* cmd_line, SmallShell* smash);
   virtual ~ForegroundCommand() {}
   void execute() override;
 };

@@ -42,6 +42,7 @@ void JobsList::removeJobById(int jobId){
     for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
       if ((*iter).m_job_id == jobId){
         this -> m_jobs.erase(iter);
+        break;
       }
     }
 
@@ -92,7 +93,16 @@ void JobsList::removeFinishedJobs(){
 }
 
 
-
+void JobsList::rePushJob(int job_id){
+  std::vector<JobEntry>::iterator iter;
+  for (iter= m_jobs.begin() ; iter < m_jobs.end(); iter++){
+    if ((*iter).m_job_id == job_id){
+      (*iter).m_is_stopped = true;
+      (*iter).m_starting_time = time(NULL);
+      break;
+    }
+  }
+}
 
 void JobsList::killAllJobs(){
   //USE SIGNALS

@@ -11,23 +11,19 @@
 
 
 
-
 //Need to add mechanism to delete finished jobs
 class JobsList {
   //public:
-  std::vector<JobEntry> m_jobs;
-
-  // TODO: Add your data members
   public:
   class JobEntry {
-
+  public:
    int m_job_id;
    std::string m_cmd_line;
    pid_t m_process_id;
    time_t m_starting_time;
    bool m_is_stopped;
 
-   public:
+   
    
    friend std::ostream& operator<<(std::ostream& os, const JobEntry& entry); 
    JobEntry(const std::string cmd_line, pid_t process_id, int job_id, bool is_stopped);
@@ -35,6 +31,7 @@ class JobsList {
  
    friend class JobsList;
   };
+  std::vector<JobEntry> m_jobs;
   JobsList() :m_jobs(){}
   ~JobsList() = default;
   
@@ -46,6 +43,8 @@ class JobsList {
   JobEntry *getLastStoppedJob(int *jobId);
   void removeFinishedJobs();
 
+  /*Takes job Id from the list and resets its timer, and puts it in stopped mode*/
+  void rePushJob(int job_id);
 
   void killAllJobs();
   // TODO: Add extra methods or modify exisitng ones as needed
@@ -53,3 +52,5 @@ class JobsList {
 
 
 #endif /*JOBS_H_*/
+
+

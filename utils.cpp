@@ -86,7 +86,7 @@ void _removeBackgroundSign(char* cmd_line) {
   cmd_line[str.find_last_not_of(WHITESPACE, idx) + 1] = 0;
 }
 
-bool isBuiltIn (string my_str)
+bool isBuiltIn (const string my_str)
 {
    const char * word = my_str.c_str();
     if ((strcmp(word,"chprompt")==0) || (strcmp(word,"showpid")==0) || (strcmp(word,"pwd")==0) || (strcmp(word,"cd")==0) || 
@@ -99,6 +99,9 @@ bool isBuiltIn (string my_str)
 
 bool is_number(const std::string& stringy)
 {
-  for (std::string::const_iterator iter = stringy.begin() ; (iter != stringy.end() && std::isdigit(*iter)); iter++){}
+  std::string::const_iterator iter = stringy.begin();
+  while(iter != stringy.end() && std::isdigit(*iter)){
+    iter++;
+  }
   return ((!stringy.empty()) && (iter == stringy.end()));
 }

@@ -13,7 +13,8 @@
 
 // TODO: Add your implementation for classes in Commands.h 
 
-SmallShell::SmallShell() : m_oldPwd(), m_command_prompt("smash"), m_jobs(), m_current_foreground_pid(0), m_current_foreground_cmd(){}
+SmallShell::SmallShell() : m_oldPwd(), m_command_prompt("smash"), m_jobs(), m_current_foreground_pid(0), m_current_foreground_cmd(),
+m_is_foreground_in_list(false), m_current_foreground_job_id(0){}
 // TODO: add your implementation
 
 
@@ -42,7 +43,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
     return new JobsCommand(cmd_line, &(this -> m_jobs));
   }
   if (firstWord.compare("fg") == 0) {
-    return new ForegroundCommand(cmd_line, &(this -> m_jobs));
+    return new ForegroundCommand(cmd_line, this);
   }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
@@ -71,11 +72,11 @@ void SmallShell::executeCommand(const char *cmd_line) {//NEED TO DO SPECIAL
       if (is_background){
         (this -> m_jobs).addJob(cmd_line, son_pid);
       } else  {
+        this -> m_is_foreground_in_list = false;
         this -> m_current_foreground_pid = son_pid;
         this -> m_current_foreground_cmd = cmd_line;
-        waitpid(son_pid, NULL, WUNTRACED);
+        waitpid(son_pid, NULL, WUNTRACED);//might need to pause son until we get here. SO if a ctr-c or ctr-z is sent then fg_pid is updated.
         this -> m_current_foreground_pid = 0;
-        this -> m_current_foreground_cmd = "";
       }
     } else  {//forked process
       setpgrp();

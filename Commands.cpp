@@ -8,6 +8,7 @@
 #include "Commands.h"
 #include "utils.h"
 #include "Jobs.h"
+#include "SmallShell.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ ChpromptCommand::ChpromptCommand(const char* cmd_line, std::string* prompt): Bui
 
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
 
-ForegroundCommand::ForegroundCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+ForegroundCommand::ForegroundCommand(const char* cmd_line, SmallShell* smash): BuiltInCommand(cmd_line), m_smash(smash){}
 
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
@@ -103,27 +104,23 @@ void ForegroundCommand::execute(){
     std::cout << "smash error: fg: invalid arguments" << std::endl;
   } else  {//one argument
     std::string stringed_id = string(arr[1]);
+    int id = stoi(stringed_id);
     if (!is_number(stringed_id)){//args isn't a number
       std::cout << "smash error: fg: invalid arguments" << std::endl;
+    } else  if ((this -> m_smash) -> m_jobs.getJobById(id) == nullptr){
+      std::cout << "smash error: fg: job-id "<< id <<<" does not exist" << std::endl;
+    } else  {
+      JobsList::JobEntry* job = (this -> m_smash)-> m_jobs.getJobById(id);
+      std::cout << job -> m_cmd_line << " : " << job -> m_process_id<< std::endl;
+      kill (job -> m_process_id, SIGCONT);
+      this -> m_smash -> m_is_foreground_in_list = true;
+      this -> m_smash -> m_current_foreground_job_id = job -> m_job_id;
+      this -> m_smash -> m_current_foreground_pid = job -> m_process_id;
+      this -> m_smash -> m_current_foreground_cmd = job -> m_cmd_line;
+      waitpid(job -> m_process_id, NULL, WUNTRACED);
+      this -> m_smash -> m_current_foreground_pid = 0;
     }
-    if (this -> m_jobs.getJobById(/*ID of JOB*/) == nullptr){
-      std::cout << "smash error: fg: job-id <job-id> does not exist" << std::endl;
-    }
-    JobsList::JobEntry* job = this -> m_jobs.getJobById(/*ID of JOB*/)
-    //unstop job and wait for it to finish : LEFT TO DO
-
-
-
-
-
-
-
   }
-
-
-
-
-
   for (int i = 0; i < numberOfArgs; i++){
     free(arr[i]);
   }

@@ -15,7 +15,11 @@ void ctrlZHandler(int sig_num) {
   SmallShell& bobby = SmallShell::getInstance();
   pid_t process = bobby.m_current_foreground_pid;
   if (process){
-    bobby.m_jobs.addJob(bobby.m_current_foreground_cmd, process, true);
+    if (bobby.m_is_foreground_in_list){
+      bobby.m_jobs.rePushJob(bobby.m_current_foreground_job_id);
+    } else  {
+      bobby.m_jobs.addJob(bobby.m_current_foreground_cmd, process, true);
+    }
     kill (process, SIG__STOP);
     std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
   }
@@ -35,4 +39,3 @@ void ctrlCHandler(int sig_num) {
 void alarmHandler(int sig_num) {
   // TODO: Add your implementation
 }
-

@@ -15,8 +15,12 @@ class SmallShell {
   std::string m_oldPwd ;
   std::string m_command_prompt ;
   JobsList m_jobs;
+
+
   pid_t m_current_foreground_pid;
   std::string m_current_foreground_cmd;
+  bool m_is_foreground_in_list;
+  int m_current_foreground_job_id;
 
   SmallShell();
   ~SmallShell()  = default;
