@@ -6,6 +6,7 @@
 #define COMMAND_MAX_ARGS (20)
 
 class JobsList; 
+
 class Command {
   
 
