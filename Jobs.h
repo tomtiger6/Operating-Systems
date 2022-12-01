@@ -50,8 +50,6 @@ class JobsList {
 
 
   void killAllJobs();
-  
-  
   // TODO: Add extra methods or modify exisitng ones as needed
 };
 

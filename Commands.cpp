@@ -13,31 +13,20 @@ using namespace std;
 
 
 void JobsCommand::execute() 
-  {
-    (*m_jobs).removeFinishedJobs();
-    (*m_jobs).printJobsList();
-  }
+{
+  (*(this -> m_jobs)).removeFinishedJobs();
+  (*(this -> m_jobs)).printJobsList();
+}
 
 
 Command::Command(const char* cmd_line):
-  m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
-  /**
-  string cmd_s = new string(_trim(string(cmd_line)));
-  string firstWord = new string(cmd_s.substr(0, cmd_s.find_first_of(" \n")));
-  this -> m_cmd_line = cmd_s;
-  this -> m_first_word = firstWord;
-  **/
+m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
 
-BuiltInCommand::BuiltInCommand(const char* cmd_line)
-  :Command(cmd_line){}
+BuiltInCommand::BuiltInCommand(const char* cmd_line) :Command(cmd_line){}
 
+RedirectionCommand::RedirectionCommand(const char* cmd_line) :Command(cmd_line){}
 
-RedirectionCommand::RedirectionCommand(const char* cmd_line)
-  :Command(cmd_line){}
-
-
-ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd)
-  :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
+ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd) :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
 
 GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
   :BuiltInCommand(cmd_line){}
@@ -60,16 +49,13 @@ void ChpromptCommand::execute(){
   {
     *(this -> m_prompt)="smash";
     return; 
-  }
-  else
-  {
+  } else  {
     *(this -> m_prompt)=arr[1];
   }
   for (int i = 0; i < numberOfArgs; i++)
   {
     free(arr[i]);
   }
-  
 }
 
 void GetCurrDirCommand::execute()
