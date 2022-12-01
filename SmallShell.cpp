@@ -41,6 +41,9 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   if (firstWord.compare("jobs") == 0) {
     return new JobsCommand(cmd_line, &(this -> m_jobs));
   }
+  if (firstWord.compare("fg") == 0) {
+    return new ForegroundCommand(cmd_line, &(this -> m_jobs));
+  }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
 

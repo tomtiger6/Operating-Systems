@@ -14,8 +14,11 @@
 
 //Need to add mechanism to delete finished jobs
 class JobsList {
- public:
+  //public:
+  std::vector<JobEntry> m_jobs;
 
+  // TODO: Add your data members
+  public:
   class JobEntry {
 
    int m_job_id;
@@ -32,11 +35,6 @@ class JobsList {
  
    friend class JobsList;
   };
-
-
-  std::vector<JobEntry> m_jobs;
-  // TODO: Add your data members
-  public:
   JobsList() :m_jobs(){}
   ~JobsList() = default;
   

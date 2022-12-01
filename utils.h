@@ -25,6 +25,8 @@ bool _isBackgroundComamnd(const char* cmd_line);
 
 void _removeBackgroundSign(char* cmd_line);
 
-bool isBuiltIn (string my_str);
+bool isBuiltIn (string& my_str);
+
+bool is_number(const std::string& stringy);
 
 #endif //UTILS_H_

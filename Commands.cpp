@@ -12,11 +12,7 @@
 using namespace std;
 
 
-void JobsCommand::execute() 
-{
-  (*(this -> m_jobs)).removeFinishedJobs();
-  (*(this -> m_jobs)).printJobsList();
-}
+
 
 
 Command::Command(const char* cmd_line):
@@ -26,20 +22,18 @@ m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_lin
 
 BuiltInCommand::BuiltInCommand(const char* cmd_line) :Command(cmd_line){}
 
-
-
 ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd) :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
 
-GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
+GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
 
-ShowPidCommand::ShowPidCommand(const char* cmd_line)
-  :BuiltInCommand(cmd_line){}
+ShowPidCommand::ShowPidCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
 
-ChpromptCommand::ChpromptCommand(const char* cmd_line, std::string* prompt)
-  :BuiltInCommand(cmd_line), m_prompt(prompt){}
+ChpromptCommand::ChpromptCommand(const char* cmd_line, std::string* prompt): BuiltInCommand(cmd_line), m_prompt(prompt){}
 
-  
+JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+
+ForegroundCommand::ForegroundCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
 }
@@ -92,6 +86,54 @@ void ChangeDirCommand::execute()
     free(arr[i]);
   }
 }//need to add error handlinf for chdir failure
+
+void JobsCommand::execute() 
+{
+  (*(this -> m_jobs)).removeFinishedJobs();
+  (*(this -> m_jobs)).printJobsList();
+}
+
+void ForegroundCommand::execute(){
+
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
+  if (numberOfArgs == 1){//no args
+    std::cout << "smash error: fg: jobs list is empty" << std::endl;
+  } else if (numberOfArgs > 2){//too many args
+    std::cout << "smash error: fg: invalid arguments" << std::endl;
+  } else  {//one argument
+    std::string stringed_id = string(arr[1]);
+    if (!is_number(stringed_id)){//args isn't a number
+      std::cout << "smash error: fg: invalid arguments" << std::endl;
+    }
+    if (this -> m_jobs.getJobById(/*ID of JOB*/) == nullptr){
+      std::cout << "smash error: fg: job-id <job-id> does not exist" << std::endl;
+    }
+    JobsList::JobEntry* job = this -> m_jobs.getJobById(/*ID of JOB*/)
+    //unstop job and wait for it to finish : LEFT TO DO
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+  for (int i = 0; i < numberOfArgs; i++){
+    free(arr[i]);
+  }
+}
+
+
+
+
+
+
 
 
 

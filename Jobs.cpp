@@ -15,17 +15,19 @@ void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopp
   }
 
 void JobsList::printJobsList(){
-    this -> removeFinishedJobs();
+  this -> removeFinishedJobs();
+  if (this -> m_jobs.size() != 0){
     std::vector<JobEntry>::iterator iter;
-    for (iter= m_jobs.begin() ; iter <= m_jobs.end(); iter++){
+    for (iter= m_jobs.begin() ; iter < m_jobs.end(); iter++){
       std::cout << *iter << std::endl;
     }
+  }
 }
 
 
 JobsList::JobEntry * JobsList::getJobById(int jobId){
     std::vector<JobEntry>::iterator iter;
-    for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
+    for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
       if ((*iter).m_job_id == jobId){
         return &(*iter);
       }
@@ -37,7 +39,7 @@ JobsList::JobEntry * JobsList::getJobById(int jobId){
 
 void JobsList::removeJobById(int jobId){
   std::vector<JobEntry>::iterator iter;
-    for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
+    for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
       if ((*iter).m_job_id == jobId){
         this -> m_jobs.erase(iter);
       }
@@ -59,7 +61,7 @@ JobsList::JobEntry * JobsList::getLastJob(int* lastJobId){
 JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
   JobEntry* last = nullptr;
   std::vector<JobEntry>::iterator iter;
-  for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
+  for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
     if ((*iter).m_is_stopped){
       last = &(*iter);
     }
@@ -72,13 +74,14 @@ JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
 
 
 void JobsList::removeFinishedJobs(){
+  if (this -> m_jobs.size() == 0){
+    return;
+  }
   bool again = true;
-  int result = 0;
   std::vector<JobEntry>::iterator iter;
   while (again){
-    for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
-        waitpid((*iter).m_process_id, &result, WNOHANG);
-        if (WIFEXITED(result)){
+    for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
+        if (waitpid((*iter).m_process_id, NULL, WNOHANG)){
           this -> m_jobs.erase(iter);
           again = true;
           break;
@@ -118,7 +121,7 @@ void JobsList::killAllJobs(){
 std::ostream& operator<<(std::ostream& os, const JobsList::JobEntry& job)
 {
     os << "[" << job.m_job_id << "] " << job.m_cmd_line << " : " << job.m_process_id 
-    << " " << difftime(time(NULL), job.m_starting_time);
+    << " " << difftime(time(NULL), job.m_starting_time) << " secs";
     if (job.m_is_stopped){
       os << " (stopped)";
     }

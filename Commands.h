@@ -111,13 +111,14 @@ class JobsCommand : public BuiltInCommand {
   JobsList* m_jobs;
  // TODO: Add your data members
  public:
-  JobsCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+  JobsCommand(const char* cmd_line, JobsList* jobs);
   virtual ~JobsCommand() = default;
   void execute() override;
 };
 
 class ForegroundCommand : public BuiltInCommand {
  // TODO: Add your data members
+ JobsList* m_jobs;
  public:
   ForegroundCommand(const char* cmd_line, JobsList* jobs);
   virtual ~ForegroundCommand() {}

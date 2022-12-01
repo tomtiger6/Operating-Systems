@@ -95,3 +95,10 @@ bool isBuiltIn (string my_str)
     }
     return false;
 }
+
+
+bool is_number(const std::string& stringy)
+{
+  for (std::string::const_iterator iter = stringy.begin() ; (iter != stringy.end() && std::isdigit(*iter)); iter++){}
+  return ((!stringy.empty()) && (iter == stringy.end()));
+}
