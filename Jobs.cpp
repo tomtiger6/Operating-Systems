@@ -73,18 +73,21 @@ JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
 
 void JobsList::removeFinishedJobs(){
   bool again = true;
+  int result = 0;
+  std::vector<JobEntry>::iterator iter;
   while (again){
-    std::vector<JobEntry>::iterator iter;
     for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
-      if ((*iter).isFinished()){
-        this -> m_jobs.erase(iter);
-        again = true;
-        break;
+        waitpid((*iter).m_process_id, &result, WNOHANG);
+        return WIFEXITED(result){
+          this -> m_jobs.erase(iter);
+          again = true;
+          break;
+        }
       }
-    }
     again = false;
   }
 }
+
 
 
 
@@ -92,11 +95,7 @@ void JobsList::killAllJobs(){
   //USE SIGNALS
 }
 
-bool JobsList::JobEntry::isFinished(){
-  int result = 0;
-  waitpid(this -> m_process_id, &result, WNOHANG);
-  return WIFEXITED(result);
-}
+
 
 
 
