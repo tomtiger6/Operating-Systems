@@ -89,9 +89,8 @@ void _removeBackgroundSign(char* cmd_line) {
 bool isBuiltIn (string my_str)
 {
    const char * word = my_str.c_str();
-    if ((strcmp(word,"chprompt")==0) || (strcmp(word,"showpid")==0) || (strcmp(word,"showpid")==0) || (strcmp(word,"pwd")==0) ||
-    (strcmp(word,"cd")==0) || (strcmp(word,"jobs")==0) || (strcmp(word,"fg")==0) || (strcmp(word,"bg")==0) || (strcmp(word,"quit")==0)
-    || (strcmp(word,"kill")==0)) {
+    if ((strcmp(word,"chprompt")==0) || (strcmp(word,"showpid")==0) || (strcmp(word,"pwd")==0) || (strcmp(word,"cd")==0) || 
+    (strcmp(word,"jobs")==0) || (strcmp(word,"fg")==0) || (strcmp(word,"bg")==0) || (strcmp(word,"quit")==0) || (strcmp(word,"kill")==0)) {
         return true;
     }
     return false;
