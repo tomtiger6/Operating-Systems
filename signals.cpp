@@ -17,8 +17,9 @@ void ctrlZHandler(int sig_num) {
   if (process){
     bobby.m_jobs.addJob(bobby.m_current_foreground_cmd, process, true);
     kill (process, SIG__STOP);
+    std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
   }
-  std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
+  
 }
 
 void ctrlCHandler(int sig_num) {
@@ -27,8 +28,8 @@ void ctrlCHandler(int sig_num) {
   pid_t process = bobby.m_current_foreground_pid;
   if (process){
     kill (process, SIG__KILL);
+    std::cout << "smash: process " << process << " was killed"  <<std::endl ;
   }
-  std::cout << "smash: process " << process << " was killed"  <<std::endl ;
 }
 
 void alarmHandler(int sig_num) {

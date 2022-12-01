@@ -22,9 +22,11 @@ void JobsCommand::execute()
 Command::Command(const char* cmd_line):
 m_cmd_line(_trim(string(cmd_line))), m_first_word(m_cmd_line.substr(0, m_cmd_line.find_first_of(" \n"))){}
 
+//RedirectionCommand::RedirectionCommand(const char* cmd_line) :Command(cmd_line){}
+
 BuiltInCommand::BuiltInCommand(const char* cmd_line) :Command(cmd_line){}
 
-RedirectionCommand::RedirectionCommand(const char* cmd_line) :Command(cmd_line){}
+
 
 ChangeDirCommand::ChangeDirCommand(const char* cmd_line, std::string* oldPwd) :BuiltInCommand(cmd_line), m_oldPwd(oldPwd){}
 
@@ -76,12 +78,12 @@ void ChangeDirCommand::execute()
   char cwd[COMMAND_ARGS_MAX_LENGTH];
   if (!strcmp ( arr[0],"-"))
   {
-    if (m_oldPwd==nullptr)
+    if (m_oldPwd->empty())
     {
     std::cout <<  "smash error:cd:OLDPWD not set";
     return;
     }
-  chdir((*m_oldPwd).c_str());
+  chdir(m_oldPwd->c_str());
   return;
   }
   chdir(arr[1]);

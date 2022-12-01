@@ -78,7 +78,7 @@ void JobsList::removeFinishedJobs(){
   while (again){
     for (iter = m_jobs.begin() ; iter <= m_jobs.end(); iter++){
         waitpid((*iter).m_process_id, &result, WNOHANG);
-        return WIFEXITED(result){
+        if (WIFEXITED(result)){
           this -> m_jobs.erase(iter);
           again = true;
           break;
