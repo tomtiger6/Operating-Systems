@@ -57,7 +57,8 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 
 
 
-void SmallShell::executeCommand(const char *cmd_line) {//NEED TO DO SPECIAL
+void SmallShell::executeCommand(const char *cmd_line) 
+{//NEED TO DO SPECIAL
   if (*cmd_line == '\r' || *cmd_line == '\n'){
     std::cout << std::endl;
       return;
@@ -67,6 +68,38 @@ void SmallShell::executeCommand(const char *cmd_line) {//NEED TO DO SPECIAL
   }
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+  size_t redirect_pos=cmd_s.find_first_of('>');
+  if (redirect_pos!=string::npos)
+  {
+  size_t redirect_pos_sec=cmd_s.find_last_of('>');
+  if (redirect_pos_sec+1>cmd_s.length())
+  {
+    //last char is '>' which should be an error  
+  }
+  string dest=cmd_s.substr(redirect_pos_sec+1,cmd_s.length());
+  cmd_s=cmd_s.substr(0,redirect_pos);
+  if (redirect_pos+1==redirect_pos_sec) 
+  {//there is '>>' in the cmd line 
+    
+  }
+  else
+  {//else there is only '>' in the cmd line
+
+  }
+  size_t pipe_pos=cmd_s.find_first_of('|');
+  if(pipe_pos!=string::npos)
+  {
+    if (pipe_pos+1>cmd_s.length())
+    {
+    //last char is '|' which should be an error  
+    }
+    string cmd_start=cmd_s.substr(pipe_pos+1,cmd_s.length());
+    string cmd_end=cmd_s.substr(0,pipe_pos);
+  }
+
+
+
+  }
   if (isBuiltIn(firstWord)){//BUILT-IN
     Command* cmd = this -> CreateCommand(cmd_line);
     cmd -> execute();
