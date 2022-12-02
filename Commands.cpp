@@ -201,23 +201,21 @@ void ExternalCommand::execute(){
   }
   else
   {
-    char* arr[COMMAND_MAX_ARGS];
-    int numberOfArgs= _parseCommandLine( char_cmd_line,arr);
+    char* args[COMMAND_MAX_ARGS];
+    int numberOfArgs= _parseCommandLine( char_cmd_line,args);
     for (int i = numberOfArgs; i < COMMAND_MAX_ARGS; i++)
     {
-      arr[i]=NULL;
+      args[i]=NULL;
     }
-    if(execvp(arr[0], arr)==-1)
+    if(execvp(args[0], args)==-1)
     {
       //need to change to correct error handling
       std::cout << "Error could not execute "<< char_cmd_line << endl;
     }
     for (int j = 0; j < numberOfArgs; j++)
     {
-      free(arr[j]);
+      free(args[j]);
     }
-    
-
   }
 
   
