@@ -69,7 +69,7 @@ void ChangeDirCommand::execute()
     return; 
   }
   char cwd[COMMAND_ARGS_MAX_LENGTH];
-  if (!strcmp ( arr[0],"-"))
+  if (!strcmp ( arr[1],"-"))
   {
     if (m_oldPwd->empty())
     {
