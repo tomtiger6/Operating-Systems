@@ -173,7 +173,8 @@ void BackgroundCommand::execute(){
 void QuitCommand::execute(){
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
-  if ((numberOfArgs > 1) && (!strcmp(arr[1], "kill"))){
+  if (!strcmp(arr[1], "kill")){
+    this -> m_jobs -> removedFinishedJobs();
     this -> m_jobs -> killAllJobsAndPrint();
   }
   for (int i = 0; i < numberOfArgs; i++){
