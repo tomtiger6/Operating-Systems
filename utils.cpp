@@ -105,3 +105,17 @@ bool is_number(const std::string& stringy)
   }
   return ((!stringy.empty()) && (iter == stringy.end()));
 }
+
+
+bool is_dashed_number(const std::string& stringy){
+  std::string::const_iterator iter = stringy.begin();
+  if ((*iter++) != '-'){
+    return false;
+  }
+  while(iter != stringy.end() && std::isdigit(*iter)){
+    iter++;
+  }
+  return ((!stringy.empty()) && (iter == stringy.end()));
+
+
+}

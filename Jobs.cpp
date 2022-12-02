@@ -80,20 +80,30 @@ JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
 
 
 void JobsList::removeFinishedJobs(){
-  if (this -> m_jobs.size() == 0){
-    return;
-  }
   bool again = true;
   std::vector<JobEntry>::iterator iter;
   while (again){
-    for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
-        if (waitpid((*iter).m_process_id, NULL, WNOHANG)){
-          this -> m_jobs.erase(iter);
-          again = true;
-          break;
-        }
+    iter = m_jobs.begin();
+    while (again && iter < m_jobs.end()) {
+      if (waitpid((*iter).m_process_id, NULL, WNOHANG)){
+        again = false;
+      } else  {
+        iter++;
       }
-    again = false;
+    }
+    if (iter == m_jobs.end()){
+      again = false;
+    }  else {
+      this -> m_jobs.erase(iter);
+      again = true;
+    }
+  }
+  for (iter= m_jobs.begin() ; iter < m_jobs.end(); iter++){
+    if (  ((*iter).m_is_stopped == false)  &&  (waitpid((*iter).m_process_id, NULL, WUNTRACED | WNOHANG))){// *iter got a sigstop
+      (*iter).m_is_stopped = true;
+    } else if (((*iter).m_is_stopped == true)  && waitpid((*iter).m_process_id, NULL, WCONTINUED | WNOHANG)){// *iter got a sigcont
+      (*iter).m_is_stopped = false;
+    }
   }
 }
 

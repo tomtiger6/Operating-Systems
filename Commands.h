@@ -123,7 +123,13 @@ class BackgroundCommand : public BuiltInCommand {
   void execute() override;
 };
 
-
+class KillCommand : public BuiltInCommand {
+  JobsList* m_jobs;
+ public:
+  KillCommand(const char* cmd_line, JobsList* jobs);
+  virtual ~KillCommand() {}
+  void execute() override;
+};
 
 
 
@@ -184,14 +190,7 @@ class SetcoreCommand : public BuiltInCommand {
   void execute() override;
 };
 
-class KillCommand : public BuiltInCommand {
-  /* Bonus */
- // TODO: Add your data members
- public:
-  KillCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~KillCommand() {}
-  void execute() override;
-};
+
 
 
 

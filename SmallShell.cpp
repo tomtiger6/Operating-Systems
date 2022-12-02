@@ -51,6 +51,9 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   if (firstWord.compare("quit") == 0) {
     return new QuitCommand(cmd_line, &(this -> m_jobs));
   }
+  if (firstWord.compare("kill") == 0) {
+    return new KillCommand(cmd_line, &(this -> m_jobs));
+  }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
 

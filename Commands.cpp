@@ -39,7 +39,7 @@ BackgroundCommand::BackgroundCommand(const char* cmd_line, SmallShell* smash): B
 
 QuitCommand::QuitCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
 
-
+KillCommand::KillCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
 
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
@@ -97,7 +97,6 @@ void ChangeDirCommand::execute()
 
 void JobsCommand::execute() 
 {
-  (*(this -> m_jobs)).removeFinishedJobs();
   (*(this -> m_jobs)).printJobsList();
 }
 
@@ -124,11 +123,11 @@ void ForegroundCommand::execute(){
       }
     }
     std::cout << job -> m_cmd_line << " : " << job -> m_process_id<< std::endl;
-    kill (job -> m_process_id, SIGCONT);
     this -> m_smash -> m_is_foreground_in_list = true;
     this -> m_smash -> m_current_foreground_job_id = job -> m_job_id;
     this -> m_smash -> m_current_foreground_pid = job -> m_process_id;
     this -> m_smash -> m_current_foreground_cmd = job -> m_cmd_line;
+    kill (job -> m_process_id, SIGCONT);
     waitpid(job -> m_process_id, NULL, WUNTRACED);
     this -> m_smash -> m_current_foreground_pid = 0;
   }
@@ -174,8 +173,7 @@ void BackgroundCommand::execute(){
 void QuitCommand::execute(){
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
-  if (!strcmp(arr[1], "kill")){
-    this -> m_jobs -> removedFinishedJobs();
+  if ((numberOfArgs > 1) && (!strcmp(arr[1], "kill"))){
     this -> m_jobs -> killAllJobsAndPrint();
   }
   for (int i = 0; i < numberOfArgs; i++){
@@ -184,7 +182,22 @@ void QuitCommand::execute(){
   exit(0);
 }
 
-
+void KillCommand::execute(){
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
+  if (numberOfArgs != 3){//wrong number of args
+    std::cerr << "smash error: kill: invalid arguments" << std::endl;
+  } else if (!((is_dashed_number(string(arr[1])))&& (is_number(string(arr[2]))))){//args are not numbas
+    std::cerr << "smash error: kill: invalid arguments" << std::endl;
+  } else  if( this -> m_jobs -> getJobById(stoi(string(arr[2]))) == nullptr ){//invalid 
+    std::cerr << "smash error: kill: job-id " << string(arr[2])   << " does not exist" << std::endl;
+  } else  {
+    kill((this -> m_jobs -> getJobById(stoi(string(arr[2])))) -> m_process_id,  stoi(string(arr[1]).substr(1)));
+  }
+  for (int i = 0; i < numberOfArgs; i++){
+    free(arr[i]);
+  }
+}
 
 
 

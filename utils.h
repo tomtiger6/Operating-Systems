@@ -29,4 +29,6 @@ bool isBuiltIn (const string my_str);
 
 bool is_number(const std::string& stringy);
 
+bool is_dashed_number(const std::string& stringy);
+
 #endif //UTILS_H_
