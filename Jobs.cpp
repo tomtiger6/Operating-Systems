@@ -6,6 +6,7 @@ JobsList::JobEntry::JobEntry(const std::string cmd_line, pid_t process_id, int j
    m_job_id(job_id), m_cmd_line(cmd_line), m_process_id(process_id), m_starting_time(time(NULL)), m_is_stopped(is_stopped){}
 
 void JobsList::addJob(const std::string cmd_line, pid_t process_id, bool isStopped){
+    this -> removeFinishedJobs();
     if (this -> m_jobs.size() == 0){
       m_jobs.push_back(JobEntry(cmd_line, process_id, 1, isStopped));
     } else  {
@@ -26,6 +27,7 @@ void JobsList::printJobsList(){
 
 
 JobsList::JobEntry * JobsList::getJobById(int jobId){
+  this -> removeFinishedJobs();
     std::vector<JobEntry>::iterator iter;
     for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
       if ((*iter).m_job_id == jobId){
@@ -38,6 +40,7 @@ JobsList::JobEntry * JobsList::getJobById(int jobId){
 
 
 void JobsList::removeJobById(int jobId){
+  this -> removeFinishedJobs();
   std::vector<JobEntry>::iterator iter;
     for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
       if ((*iter).m_job_id == jobId){
@@ -49,6 +52,7 @@ void JobsList::removeJobById(int jobId){
 }
 
 JobsList::JobEntry * JobsList::getLastJob(int* lastJobId){
+  this -> removeFinishedJobs();
   if (this -> m_jobs.size() == 0){
     return nullptr;
   }
@@ -60,6 +64,7 @@ JobsList::JobEntry * JobsList::getLastJob(int* lastJobId){
 
 
 JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
+  this -> removeFinishedJobs();
   JobEntry* last = nullptr;
   std::vector<JobEntry>::iterator iter;
   for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){

@@ -127,8 +127,9 @@ class ForegroundCommand : public BuiltInCommand {
 
 class BackgroundCommand : public BuiltInCommand {
  // TODO: Add your data members
+ SmallShell* m_smash;
  public:
-  BackgroundCommand(const char* cmd_line, JobsList* jobs);
+  BackgroundCommand(const char* cmd_line, SmallShell* smash);
   virtual ~BackgroundCommand() {}
   void execute() override;
 };

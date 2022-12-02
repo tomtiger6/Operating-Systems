@@ -23,7 +23,6 @@ void ctrlZHandler(int sig_num) {
     kill (process, SIG__STOP);
     std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
   }
-  
 }
 
 void ctrlCHandler(int sig_num) {
@@ -33,7 +32,7 @@ void ctrlCHandler(int sig_num) {
   if (process){
     kill (process, SIG__KILL);
     std::cout << "smash: process " << process << " was killed"  <<std::endl ;
-  }
+  } 
 }
 
 void alarmHandler(int sig_num) {
