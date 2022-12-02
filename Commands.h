@@ -9,11 +9,24 @@
 class JobsList; 
 class SmallShell;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Command {
-  
-// TODO: Add your data members
-  
- public:
+public:
   std::string m_cmd_line;
   std::string m_first_word;
   
@@ -42,24 +55,6 @@ class ExternalCommand : public Command {
   void execute() override;
 };
 
-class PipeCommand : public Command {
-  // TODO: Add your data members
- public:
-  PipeCommand(const char* cmd_line);
-  virtual ~PipeCommand() {}
-  void execute() override;
-};
-
-class RedirectionCommand : public Command {
- // TODO: Add your data members
- public:
-  explicit RedirectionCommand(const char* cmd_line) :Command(cmd_line){}
-  virtual ~RedirectionCommand() = default;
-  void execute() override;
-  //void prepare() override;
-  //void cleanup() override;
-};
-
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
   std::string* m_oldPwd;
@@ -83,7 +78,6 @@ class ShowPidCommand : public BuiltInCommand {
   void execute() override;
 };
 
-
 class ChpromptCommand : public BuiltInCommand {
  public:
  
@@ -93,19 +87,14 @@ class ChpromptCommand : public BuiltInCommand {
   void execute() override;
 };
 
-
-
-
 class QuitCommand : public BuiltInCommand {
+  JobsList* m_jobs;
 // TODO: Add your data members
 public:
   QuitCommand(const char* cmd_line, JobsList* jobs);
   virtual ~QuitCommand() {}
   void execute() override;
 };
-
-
-
 
 class JobsCommand : public BuiltInCommand {
   JobsList* m_jobs;
@@ -132,6 +121,40 @@ class BackgroundCommand : public BuiltInCommand {
   BackgroundCommand(const char* cmd_line, SmallShell* smash);
   virtual ~BackgroundCommand() {}
   void execute() override;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class PipeCommand : public Command {
+  // TODO: Add your data members
+ public:
+  PipeCommand(const char* cmd_line);
+  virtual ~PipeCommand() {}
+  void execute() override;
+};
+
+class RedirectionCommand : public Command {
+ // TODO: Add your data members
+ public:
+  explicit RedirectionCommand(const char* cmd_line) :Command(cmd_line){}
+  virtual ~RedirectionCommand() = default;
+  void execute() override;
+  //void prepare() override;
+  //void cleanup() override;
 };
 
 class TimeoutCommand : public BuiltInCommand {
@@ -169,6 +192,7 @@ class KillCommand : public BuiltInCommand {
   virtual ~KillCommand() {}
   void execute() override;
 };
+
 
 
 

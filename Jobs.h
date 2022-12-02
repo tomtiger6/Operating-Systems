@@ -43,10 +43,9 @@ class JobsList {
   JobEntry *getLastStoppedJob(int *jobId);
   void removeFinishedJobs();
 
-  /*Takes job Id from the list and resets its timer, and puts it in stopped mode*/
+  /*Finds job Id in the list and resets its timer, and puts it in stopped mode*/
   void rePushJob(int job_id);
-
-  void killAllJobs();
+  void killAllJobsAndPrint();
   // TODO: Add extra methods or modify exisitng ones as needed
 };
 

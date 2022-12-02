@@ -109,27 +109,15 @@ void JobsList::rePushJob(int job_id){
   }
 }
 
-void JobsList::killAllJobs(){
-  //USE SIGNALS
+void JobsList::killAllJobsAndPrint(){
+  this -> removeFinishedJobs();
+  std::cout << "smash: sending SIGKILL signal to " << this -> m_jobs.size()  <<" jobs:" <<std::endl;
+  std::vector<JobEntry>::iterator iter;
+  for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
+    kill((*iter).m_process_id, SIGKILL);
+    std::cout << (*iter).m_process_id << ": " << (*iter).m_cmd_line << std::endl;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

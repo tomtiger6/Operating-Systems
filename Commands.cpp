@@ -37,6 +37,9 @@ ForegroundCommand::ForegroundCommand(const char* cmd_line, SmallShell* smash): B
 
 BackgroundCommand::BackgroundCommand(const char* cmd_line, SmallShell* smash): BuiltInCommand(cmd_line), m_smash(smash){}
 
+QuitCommand::QuitCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
+
+
 
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
@@ -68,7 +71,7 @@ void ChangeDirCommand::execute()
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
   if (numberOfArgs > 2)
   {
-    std::cout <<  "smash error: cd: to many arguments" << std::endl;
+    std::cerr <<  "smash error: cd: to many arguments" << std::endl;
     return; 
   }
   char cwd[COMMAND_ARGS_MAX_LENGTH];
@@ -76,7 +79,7 @@ void ChangeDirCommand::execute()
   {
     if (m_oldPwd->empty())
     {
-    std::cout <<  "smash error:cd:OLDPWD not set" << std::endl;
+    std::cerr <<  "smash error:cd:OLDPWD not set" << std::endl;
     return;
     }
     string temp = getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
@@ -102,21 +105,21 @@ void ForegroundCommand::execute(){
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
   if (numberOfArgs == 1 && ((this -> m_smash) -> m_jobs.getLastJob(NULL) == nullptr)){//no args and empty list
-    std::cout << "smash error: fg: jobs list is empty" << std::endl;
+    std::cerr << "smash error: fg: jobs list is empty" << std::endl;
   } else if (numberOfArgs > 2){//too many args
-    std::cout << "smash error: fg: invalid arguments" << std::endl;
+    std::cerr << "smash error: fg: invalid arguments" << std::endl;
   } else  {//one argument or no arguments but with a last job
     JobsList::JobEntry* job = (this -> m_smash) -> m_jobs.getLastJob(NULL);
     if (numberOfArgs == 2){// there is an argument, needs to be checked
       std::string stringed_id = string(arr[1]);
       if (!is_number(stringed_id)){//args isn't a number
-        std::cout << "smash error: fg: invalid arguments" << std::endl;
+        std::cerr << "smash error: fg: invalid arguments" << std::endl;
         for (int i = 0; i < numberOfArgs; i++){free(arr[i]);} return;
       } 
       int id = stoi(stringed_id);
       job = (this -> m_smash)-> m_jobs.getJobById(id);
       if (job == nullptr){
-        std::cout << "smash error: fg: job-id "<< id <<" does not exist" << std::endl;
+        std::cerr << "smash error: fg: job-id "<< id <<" does not exist" << std::endl;
         for (int i = 0; i < numberOfArgs; i++){free(arr[i]);} return;
       }
     }
@@ -138,24 +141,24 @@ void BackgroundCommand::execute(){
   char* arr[COMMAND_MAX_ARGS];
   int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
   if (numberOfArgs == 1 && ((this -> m_smash) -> m_jobs.getLastStoppedJob(NULL) == nullptr)){//no args and no stopped jobs
-    std::cout << "smash error: bg: there is no stopped jobs to resume" << std::endl;
+    std::cerr << "smash error: bg: there is no stopped jobs to resume" << std::endl;
   } else if (numberOfArgs > 2){//too many args
-    std::cout << "smash error: bg: invalid arguments" << std::endl;
+    std::cerr << "smash error: bg: invalid arguments" << std::endl;
   } else  {//one argument or no arguments but with a last stopped job
     JobsList::JobEntry* job = (this -> m_smash) -> m_jobs.getLastStoppedJob(NULL);
     if (numberOfArgs == 2){// there is an argument, needs to be checked
       std::string stringed_id = string(arr[1]);
       if (!is_number(stringed_id)){//arg isn't a number
-        std::cout << "smash error: fg: invalid arguments" << std::endl;
+        std::cerr << "smash error: fg: invalid arguments" << std::endl;
         for (int i = 0; i < numberOfArgs; i++){free(arr[i]);} return;
       } 
       int id = stoi(stringed_id);
       job = (this -> m_smash)-> m_jobs.getJobById(id);
       if (job == nullptr){
-        std::cout << "smash error: bg: job-id "<< id <<" does not exist" << std::endl;
+        std::cerr << "smash error: bg: job-id "<< id <<" does not exist" << std::endl;
         for (int i = 0; i < numberOfArgs; i++){free(arr[i]);} return;
       } else if (job -> m_is_stopped == false){
-        std::cout << "smash error: bg: job-id " << job -> m_job_id  << " is already running in the background" << std::endl;
+        std::cerr << "smash error: bg: job-id " << job -> m_job_id  << " is already running in the background" << std::endl;
         for (int i = 0; i < numberOfArgs; i++){free(arr[i]);} return;
       }
     }
@@ -168,7 +171,18 @@ void BackgroundCommand::execute(){
   }
 }
 
-
+void QuitCommand::execute(){
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
+  if (!strcmp(arr[1], "kill")){
+    this -> m_jobs -> removedFinishedJobs();
+    this -> m_jobs -> killAllJobsAndPrint();
+  }
+  for (int i = 0; i < numberOfArgs; i++){
+    free(arr[i]);
+  }
+  exit(0);
+}
 
 
 
