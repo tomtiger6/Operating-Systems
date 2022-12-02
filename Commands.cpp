@@ -204,8 +204,6 @@ void KillCommand::execute(){
 
 
 
-
-
 void ExternalCommand::execute(){
   string str_cmd_line = this -> m_cmd_line;
   char * char_cmd_line = (char*)(str_cmd_line.c_str());
