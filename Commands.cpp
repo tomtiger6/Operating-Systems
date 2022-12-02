@@ -180,13 +180,45 @@ void BackgroundCommand::execute(){
 
 
 void ExternalCommand::execute(){
-  //need normal case
-  char* args[4];
-	args[0] = (char*)"/bin/bash";
-	args[1] = (char*)"-c";
-  string temp = this -> m_cmd_line;
-	args[2] = (char*)(temp.c_str());
-	args[3] = NULL;
-	_removeBackgroundSign(args[2]);
-	execvp(args[0], args);
+  string str_cmd_line = this -> m_cmd_line;
+  char * char_cmd_line = (char*)(str_cmd_line.c_str());
+  _removeBackgroundSign(char_cmd_line);
+  if (str_cmd_line.find('*')!= string::npos || str_cmd_line.find('?')!= string::npos)
+  {
+    //complex command
+    char* args[4];
+    args[0] = (char*)"/bin/bash";
+    args[1] = (char*)"-c";
+  
+    args[2] = char_cmd_line;
+    args[3] = NULL;
+    _removeBackgroundSign(args[2]);
+    if(execvp(args[0], args)== -1) 
+    {
+      //need to change to correct error handling
+      std::cout << "Error could not execute "<< char_cmd_line << endl;
+    }
+  }
+  else
+  {
+    char* arr[COMMAND_MAX_ARGS];
+    int numberOfArgs= _parseCommandLine( char_cmd_line,arr);
+    for (int i = numberOfArgs; i < COMMAND_MAX_ARGS; i++)
+    {
+      arr[i]=NULL;
+    }
+    if(execvp(arr[0], arr)==-1)
+    {
+      //need to change to correct error handling
+      std::cout << "Error could not execute "<< char_cmd_line << endl;
+    }
+    for (int j = 0; j < numberOfArgs; j++)
+    {
+      free(arr[j]);
+    }
+    
+
+  }
+
+  
 }
