@@ -108,7 +108,7 @@ void ForegroundCommand::execute(){
     if (!is_number(stringed_id)){//args isn't a number
       std::cout << "smash error: fg: invalid arguments" << std::endl;
     } else  if ((this -> m_smash) -> m_jobs.getJobById(id) == nullptr){
-      std::cout << "smash error: fg: job-id "<< id <<<" does not exist" << std::endl;
+      std::cout << "smash error: fg: job-id "<< id <<" does not exist" << std::endl;
     } else  {
       JobsList::JobEntry* job = (this -> m_smash)-> m_jobs.getJobById(id);
       std::cout << job -> m_cmd_line << " : " << job -> m_process_id<< std::endl;
