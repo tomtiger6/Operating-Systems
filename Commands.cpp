@@ -12,7 +12,7 @@
 
 using namespace std;
 
-
+#define freeAndRet(arr,num) for(int i=0;i<num;i++){free(arr[i]);} return
 
 
 
@@ -71,29 +71,32 @@ void ChangeDirCommand::execute()
   int numberOfArgs= _parseCommandLine( (this->m_cmd_line).c_str(),arr);
   if (numberOfArgs > 2)
   {
-    std::cerr <<  "smash error: cd: to many arguments" << std::endl;
-    return; 
+    std::cerr <<  "smash error: cd: too many arguments" << std::endl;
+    freeAndRet(arr,numberOfArgs); 
   }
   char cwd[COMMAND_ARGS_MAX_LENGTH];
   if (!strcmp ( arr[1],"-"))
   {
-    if (m_oldPwd->empty())
-    {
-    std::cerr <<  "smash error: cd: OLDPWD not set" << std::endl;
-    return;
+    if (m_oldPwd->empty()){
+      std::cerr <<  "smash error: cd: OLDPWD not set" << std::endl;
+      freeAndRet(arr,numberOfArgs);
     }
     string temp = getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
-    chdir(m_oldPwd->c_str());
+    if (chdir(m_oldPwd->c_str())){
+      perror("smash error: chdir failed");
+    } else  {
+      *m_oldPwd = temp;
+    }
+    freeAndRet(arr,numberOfArgs);
+  }
+  string temp = getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
+  if (chdir(arr[1])){
+    perror("smash error: chdir failed");
+  } else  {
     *m_oldPwd = temp;
-    return;
   }
-  *m_oldPwd = getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
-  chdir(arr[1]);
-   for (int i = 0; i < numberOfArgs; i++)
-  {
-    free(arr[i]);
-  }
-}//need to add error handlinf for chdir failure
+  freeAndRet(arr,numberOfArgs);
+}
 
 void JobsCommand::execute() 
 {
