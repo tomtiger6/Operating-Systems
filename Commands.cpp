@@ -79,7 +79,7 @@ void ChangeDirCommand::execute()
   {
     if (m_oldPwd->empty())
     {
-    std::cerr <<  "smash error:cd:OLDPWD not set" << std::endl;
+    std::cerr <<  "smash error: cd: OLDPWD not set" << std::endl;
     return;
     }
     string temp = getcwd(cwd,COMMAND_ARGS_MAX_LENGTH);
