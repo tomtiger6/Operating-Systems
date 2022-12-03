@@ -20,8 +20,11 @@ void ctrlZHandler(int sig_num) {
     } else  {
       bobby.m_jobs.addJob(bobby.m_current_foreground_cmd, process, true);
     }
-    kill (process, SIG__STOP);
-    std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
+    if (kill (process, SIG__STOP)){
+      perror("smash error: kill failed");
+    } else  {
+      std::cout << "smash: process "  <<  process <<" was stopped" << std::endl;
+    }
   }
 }
 
@@ -30,8 +33,11 @@ void ctrlCHandler(int sig_num) {
   SmallShell& bobby = SmallShell::getInstance();
   pid_t process = bobby.m_current_foreground_pid;
   if (process){
-    kill (process, SIG__KILL);
-    std::cout << "smash: process " << process << " was killed"  <<std::endl ;
+    if (kill (process, SIG__KILL)){
+      perror("smash error: kill failed");
+    } else  {
+      std::cout << "smash: process " << process << " was killed"  <<std::endl ;
+    }
   } 
 }
 

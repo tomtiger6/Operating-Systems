@@ -127,7 +127,9 @@ void ForegroundCommand::execute(){
     this -> m_smash -> m_current_foreground_job_id = job -> m_job_id;
     this -> m_smash -> m_current_foreground_pid = job -> m_process_id;
     this -> m_smash -> m_current_foreground_cmd = job -> m_cmd_line;
-    kill (job -> m_process_id, SIGCONT);
+    if (kill (job -> m_process_id, SIGCONT)){
+      perror("smash error: kill failed");
+    }
     waitpid(job -> m_process_id, NULL, WUNTRACED);
     this -> m_smash -> m_current_foreground_pid = 0;
   }
@@ -162,7 +164,9 @@ void BackgroundCommand::execute(){
       }
     }
     std::cout << job -> m_cmd_line << " : " << job -> m_process_id<< std::endl;
-    kill (job -> m_process_id, SIGCONT);
+    if (kill (job -> m_process_id, SIGCONT)){
+      perror("smash error: kill failed");
+    }
     job -> m_is_stopped = false;
   }
   for (int i = 0; i < numberOfArgs; i++){
@@ -192,9 +196,15 @@ void KillCommand::execute(){
   } else  if( this -> m_jobs -> getJobById(stoi(string(arr[2]))) == nullptr ){//invalid 
     std::cerr << "smash error: kill: job-id " << string(arr[2])   << " does not exist" << std::endl;
   } else  {
-    kill((this -> m_jobs -> getJobById(stoi(string(arr[2])))) -> m_process_id,  stoi(string(arr[1]).substr(1)));
-    std::cout << "signal number "    << stoi(string(arr[1]).substr(1)) 
-    <<" was sent to pid "<< this -> m_jobs -> getJobById(stoi(string(arr[2]))) -> m_process_id <<std::endl;
+    int sig = stoi(string(arr[1]).substr(1));
+    pid_t receiver = (this -> m_jobs -> getJobById(stoi(string(arr[2])))) -> m_process_id;
+    if (sig < 1 || sig > 31){
+      std::cerr << "smash error: kill: invalid arguments" << std::endl;
+    } else if (kill(receiver ,  sig)){
+      perror("smash error: kill failed");
+    } else  {
+      std::cout << "signal number "    <<  sig<<" was sent to pid "<< receiver <<std::endl;
+    }
   }
   for (int i = 0; i < numberOfArgs; i++){
     free(arr[i]);

@@ -100,6 +100,11 @@ bool isBuiltIn (const string my_str)
 bool is_number(const std::string& stringy)
 {
   std::string::const_iterator iter = stringy.begin();
+
+  if (iter == stringy.end() || (((*iter) != '-') && (!std::isdigit(*iter))) ){
+    return false;
+  }
+  iter++;
   while(iter != stringy.end() && std::isdigit(*iter)){
     iter++;
   }
@@ -109,13 +114,8 @@ bool is_number(const std::string& stringy)
 
 bool is_dashed_number(const std::string& stringy){
   std::string::const_iterator iter = stringy.begin();
-  if ((*iter++) != '-'){
+  if (iter == stringy.end() || (*iter) != '-'){
     return false;
   }
-  while(iter != stringy.end() && std::isdigit(*iter)){
-    iter++;
-  }
-  return ((!stringy.empty()) && (iter == stringy.end()));
-
-
+  return is_number(stringy.substr(1));
 }
