@@ -1,6 +1,7 @@
 #include "SmallShell.h"
 #include <vector>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include <iostream>
 #include <sstream>
@@ -62,6 +63,8 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 
 void SmallShell::executeCommand(const char *cmd_line) 
 {//NEED TO DO SPECIAL
+  int std_out_copy= 10;
+  int fd=-1;
   if (*cmd_line == '\r' || *cmd_line == '\n'){
     std::cout << std::endl;
       return;
@@ -72,37 +75,42 @@ void SmallShell::executeCommand(const char *cmd_line)
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
   size_t redirect_pos=cmd_s.find_first_of('>');
+  //-------start of special commands----------- 
   if (redirect_pos!=string::npos)
-  {
-  size_t redirect_pos_sec=cmd_s.find_last_of('>');
-  if (redirect_pos_sec+1>cmd_s.length())
-  {
-    //last char is '>' which should be an error  
-  }
-  string dest=cmd_s.substr(redirect_pos_sec+1,cmd_s.length());
-  cmd_s=cmd_s.substr(0,redirect_pos);
-  if (redirect_pos+1==redirect_pos_sec) 
-  {//there is '>>' in the cmd line 
-    
-  }
-  else
-  {//else there is only '>' in the cmd line
-
+  {//found '>' in cmd_line
+    size_t redirect_pos_sec=cmd_s.find_last_of('>');
+    if (redirect_pos_sec+1>cmd_s.length())
+    {
+      //last char is '>' which should be an error  
+    }
+    string dest=_trim( cmd_s.substr(redirect_pos_sec+1));
+    cmd_line=cmd_s.substr(0,redirect_pos).c_str();
+    std_out_copy= dup(1);
+    if (redirect_pos+1==redirect_pos_sec) 
+    {//there is '>>' in the cmd line should append
+      fd=open(dest.c_str(), O_RDWR |O_APPEND  |O_CREAT);
+    }
+    else if (redirect_pos==redirect_pos_sec)
+    {//else there is only '>' in the cmd line should overwrite.
+      fd=open(dest.c_str(), O_RDWR |O_CREAT);
+    }
+    dup2(fd,1);
   }
   size_t pipe_pos=cmd_s.find_first_of('|');
   if(pipe_pos!=string::npos)
-  {
+  {//found '|' in cmd_line
     if (pipe_pos+1>cmd_s.length())
     {
     //last char is '|' which should be an error  
+    //int arr[2];
+    //pipe(arr);
+    //fork;
+
     }
     string cmd_start=cmd_s.substr(pipe_pos+1,cmd_s.length());
     string cmd_end=cmd_s.substr(0,pipe_pos);
-  }
-
-
-
-  }
+  }  
+  //-------end of special commands----------- 
   if (isBuiltIn(firstWord)){//BUILT-IN
     Command* cmd = this -> CreateCommand(cmd_line);
     cmd -> execute();
@@ -127,6 +135,12 @@ void SmallShell::executeCommand(const char *cmd_line)
       delete cmd;
       exit(0);
     }
+  }
+  if (fd!=-1)
+  {
+    close(fd);
+    dup2(std_out_copy,1);
+    close(std_out_copy);
   }
 }
 
