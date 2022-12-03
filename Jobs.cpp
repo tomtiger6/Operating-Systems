@@ -80,7 +80,7 @@ JobsList::JobEntry * JobsList::getLastStoppedJob(int *jobId){
 
 
 void JobsList::removeFinishedJobs(){
-  std::vector<JobEntry>::iterator iter;
+  std::vector<JobEntry>::iterator iter= m_jobs.begin();
 
   while (iter < m_jobs.end()){
     if (waitpid((*iter).m_process_id, NULL, WNOHANG)){
