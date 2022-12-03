@@ -117,11 +117,13 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
   }  
   //-------end of special commands----------- 
+
+
   if (isBuiltIn(firstWord)){//BUILT-IN
     Command* cmd = this -> CreateCommand(cmd_line);
     cmd -> execute();
     delete cmd;
-  } else  {//EXTERNAL
+  } else  {//EXTERNAL // or timeout
     bool is_background = _isBackgroundComamnd(cmd_line);
     pid_t son_pid = fork();
     if (son_pid){//dad
@@ -142,6 +144,8 @@ void SmallShell::executeCommand(const char *cmd_line)
       exit(0);
     }
   }
+
+
   if (fd!=-1)
   {
     close(fd);

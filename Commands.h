@@ -131,7 +131,14 @@ class KillCommand : public BuiltInCommand {
   void execute() override;
 };
 
-
+class TimeoutCommand : public BuiltInCommand {
+/* Optional */
+// TODO: Add your data members
+ public:
+  explicit TimeoutCommand(const char* cmd_line);
+  virtual ~TimeoutCommand() {}
+  void execute() override;
+};
 
 
 
@@ -163,14 +170,7 @@ class RedirectionCommand : public Command {
   //void cleanup() override;
 };
 
-class TimeoutCommand : public BuiltInCommand {
-/* Optional */
-// TODO: Add your data members
- public:
-  explicit TimeoutCommand(const char* cmd_line);
-  virtual ~TimeoutCommand() {}
-  void execute() override;
-};
+
 
 class FareCommand : public BuiltInCommand {
   /* Optional */
