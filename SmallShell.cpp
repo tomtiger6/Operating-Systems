@@ -109,6 +109,16 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
     string cmd_start=cmd_s.substr(pipe_pos+1,cmd_s.length());
     string cmd_end=cmd_s.substr(0,pipe_pos);
+    int pipe_arr[2];
+    pipe(pipe_arr);
+    if (fork()==0)
+    {//son
+      close(pipe_arr[0]);
+    }
+    else 
+    {//father
+      close(pipe_arr[1]);
+    }
   }  
   //-------end of special commands----------- 
   if (isBuiltIn(firstWord)){//BUILT-IN
