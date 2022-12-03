@@ -65,12 +65,8 @@ void SmallShell::executeCommand(const char *cmd_line)
 {//NEED TO DO SPECIAL
   int std_out_copy= 10;
   int fd=-1;
-  if (*cmd_line == '\r' || *cmd_line == '\n'){
-    std::cout << std::endl;
-      return;
-  }
   if (*cmd_line == '\0'){
-    exit(0);
+    return;
   }
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));

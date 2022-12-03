@@ -25,6 +25,9 @@ int main(int argc, char* argv[]) {
         std::cout << smash.m_command_prompt << "> ";
         std::string cmd_line;
         std::getline(std::cin, cmd_line);
+        if(std::cin.eof()){
+            return 0;
+        }
         smash.executeCommand(cmd_line.c_str());
     }
     return 0;
