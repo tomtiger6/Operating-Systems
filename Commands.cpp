@@ -193,6 +193,8 @@ void KillCommand::execute(){
     std::cerr << "smash error: kill: job-id " << string(arr[2])   << " does not exist" << std::endl;
   } else  {
     kill((this -> m_jobs -> getJobById(stoi(string(arr[2])))) -> m_process_id,  stoi(string(arr[1]).substr(1)));
+    std::cout << "signal number "    << stoi(string(arr[1]).substr(1)) 
+    <<" was sent to pid "<< this -> m_jobs -> getJobById(stoi(string(arr[2]))) -> m_process_id <<std::endl;
   }
   for (int i = 0; i < numberOfArgs; i++){
     free(arr[i]);
