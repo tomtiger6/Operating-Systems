@@ -119,3 +119,14 @@ bool is_dashed_number(const std::string& stringy){
   }
   return is_number(stringy.substr(1));
 }
+
+string read_stdin ()
+{
+  string ret;
+  char read_buff[COMMAND_ARGS_MAX_LENGTH];
+  while (read(STDIN_FILENO,read_buff,COMMAND_ARGS_MAX_LENGTH)>0)
+  {
+    ret.append(read_buff);
+  }
+  return ret;
+}

@@ -84,11 +84,11 @@ void SmallShell::executeCommand(const char *cmd_line)
     std_out_copy= dup(1);
     if (redirect_pos+1==redirect_pos_sec) 
     {//there is '>>' in the cmd line should append
-      fd=open(dest.c_str(), O_RDWR |O_APPEND  |O_CREAT);
+      fd=open(dest.c_str(), O_RDWR | O_CREAT | O_APPEND , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
     }
     else if (redirect_pos==redirect_pos_sec)
     {//else there is only '>' in the cmd line should overwrite.
-      fd=open(dest.c_str(), O_RDWR |O_CREAT);
+      fd=open(dest.c_str(), O_RDWR | O_CREAT , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
     }
     dup2(fd,1);
   }
@@ -98,22 +98,45 @@ void SmallShell::executeCommand(const char *cmd_line)
     if (pipe_pos+1>cmd_s.length())
     {
     //last char is '|' which should be an error  
-    //int arr[2];
-    //pipe(arr);
-    //fork;
 
     }
-    string cmd_start=cmd_s.substr(pipe_pos+1,cmd_s.length());
-    string cmd_end=cmd_s.substr(0,pipe_pos);
+    string cmd_end=cmd_s.substr(pipe_pos+1,cmd_s.length());
+    string cmd_start=cmd_s.substr(0,pipe_pos);
     int pipe_arr[2];
     pipe(pipe_arr);
-    if (fork()==0)
+    pid_t pid =fork();
+    if (pid==0)
     {//son
+      setpgrp();
+      if (cmd_end[0]=='&')
+      {
+        cmd_end=cmd_end.substr(1);
+      }
+      dup2(pipe_arr[0],STDIN_FILENO);
+      close(pipe_arr[1]);
       close(pipe_arr[0]);
+      std_out_copy= dup(STDIN_FILENO);
+      SmallShell& bobby = SmallShell::getInstance();
+      bobby.executeCommand((cmd_end + " " + read_stdin()).c_str());
+      exit(0);
     }
     else 
     {//father
+      int std_to_work_with=STDOUT_FILENO;
+      if(cmd_end[0]=='&')
+      {
+        std_to_work_with= STDERR_FILENO;
+      }
+      close(pipe_arr[0]);
+      std_out_copy= dup(std_to_work_with);
+      dup2(pipe_arr[1],std_to_work_with);
       close(pipe_arr[1]);
+      SmallShell& bobby = SmallShell::getInstance();
+      bobby.executeCommand(cmd_start.c_str());
+      dup2(std_out_copy,std_to_work_with);
+      close(std_out_copy);
+      waitpid(pid,NULL,0);
+      return;
     }
   }  
   //-------end of special commands----------- 
