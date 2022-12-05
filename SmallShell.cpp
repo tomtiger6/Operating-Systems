@@ -60,7 +60,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
     return new KillCommand(cmd_line_noamp, &(this -> m_jobs));
   }
   if (firstWord.compare("fare") == 0) {
-    return new FareCommand(cmd_line_noamp, &(this -> m_jobs));
+    return new FareCommand(cmd_line_noamp);
   }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
