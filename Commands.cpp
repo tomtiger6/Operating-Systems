@@ -236,7 +236,7 @@ void ExternalCommand::execute(){
     if(execvp(args[0], args)== -1) 
     {
       //need to change to correct error handling
-      std::cout << "Error could not execute "<< char_cmd_line << endl;
+      std::cerr << "Error could not execute "<< char_cmd_line << endl;
     }
   }
   else
@@ -250,7 +250,7 @@ void ExternalCommand::execute(){
     if(execvp(args[0], args)==-1)
     {
       //need to change to correct error handling
-      std::cout << "Error could not execute "<< char_cmd_line << endl;
+      std::cerr << "Error could not execute "<< char_cmd_line << endl;
     }
     for (int j = 0; j < numberOfArgs; j++)
     {

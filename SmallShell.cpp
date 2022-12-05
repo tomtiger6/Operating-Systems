@@ -25,35 +25,39 @@ m_is_foreground_in_list(false), m_current_foreground_job_id(0){}
 * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
 */
 Command * SmallShell::CreateCommand(const char* cmd_line) {
-  string cmd_s = _trim(string(cmd_line));
-  string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+  std::string cmd_s = _trim(string(cmd_line));
+  std::string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
+  firstWord = firstWord.substr(0,firstWord.find_last_of('&'));
+  std::string cmd_line_noamps = cmd_line;
+  cmd_line_noamps = cmd_line_noamps.substr(0,cmd_line_noamps.find_last_of('&'));
+  const char * cmd_line_noamp = cmd_line_noamps.c_str();
   
   if (firstWord.compare("chprompt") == 0) {
-    return new ChpromptCommand(cmd_line, &(this -> m_command_prompt));
+    return new ChpromptCommand(cmd_line_noamp, &(this -> m_command_prompt));
   }
   if (firstWord.compare("showpid") == 0) {
-    return new ShowPidCommand(cmd_line);
+    return new ShowPidCommand(cmd_line_noamp);
   }
   if (firstWord.compare("pwd") == 0) {
-    return new GetCurrDirCommand(cmd_line);
+    return new GetCurrDirCommand(cmd_line_noamp);
   }
   if (firstWord.compare("cd") == 0) {
-    return new ChangeDirCommand(cmd_line, &(this -> m_oldPwd));
+    return new ChangeDirCommand(cmd_line_noamp, &(this -> m_oldPwd));
   }
   if (firstWord.compare("jobs") == 0) {
-    return new JobsCommand(cmd_line, &(this -> m_jobs));
+    return new JobsCommand(cmd_line_noamp, &(this -> m_jobs));
   }
   if (firstWord.compare("fg") == 0) {
-    return new ForegroundCommand(cmd_line, this);
+    return new ForegroundCommand(cmd_line_noamp, this);
   }
   if (firstWord.compare("bg") == 0) {
-    return new BackgroundCommand(cmd_line, this);
+    return new BackgroundCommand(cmd_line_noamp, this);
   }
   if (firstWord.compare("quit") == 0) {
-    return new QuitCommand(cmd_line, &(this -> m_jobs));
+    return new QuitCommand(cmd_line_noamp, &(this -> m_jobs));
   }
   if (firstWord.compare("kill") == 0) {
-    return new KillCommand(cmd_line, &(this -> m_jobs));
+    return new KillCommand(cmd_line_noamp, &(this -> m_jobs));
   }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
