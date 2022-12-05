@@ -94,10 +94,23 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
     else if (redirect_pos==redirect_pos_sec)
     {//else there is only '>' in the cmd line should overwrite.
-      FILE* my_file=fopen(dest.c_str(), "w");
-      fd=fileno(my_file);
+      fd=open(dest.c_str(), O_RDWR | O_CREAT | O_TRUNC , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
+
       //fd=open(dest.c_str(),  O_RDWR | O_CREAT , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
     }
+    if (fd<0) 
+      {
+        if (errno== EACCES)
+        {
+          std::cerr << "smash error: open failed: Permission denied"<< std::endl;
+        }
+        if (errno== ENOENT)
+        {
+          std::cerr << "smash error: open failed: No such file or directory"<< std::endl;
+        }
+        return;
+        //other problems with opning a file?
+      }
     dup2(fd,1);
     SmallShell& bobby = SmallShell::getInstance();
     bobby.executeCommand(redirect_cmd.c_str());
