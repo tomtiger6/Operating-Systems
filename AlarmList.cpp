@@ -15,8 +15,8 @@ void AlarmList::handleAlarm(){
         std::cout << "smash: "   << job -> m_cmd_line <<  " timed out!" << std::endl;
       }
     }
-    else if (bobby.m_current_foreground_pid){
-      if (kill(process_id, SIGKILL)){
+    else if (bobby.m_current_foreground_pid == process_id){
+      if (kill(bobby.m_current_foreground_pid, SIGKILL)){
         perror("smash error: kill failed");
       } else  {
         std::cout << "smash: "   << bobby.m_current_foreground_cmd <<  " timed out!" << std::endl;
