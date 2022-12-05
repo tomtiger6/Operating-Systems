@@ -237,7 +237,8 @@ void ExternalCommand::execute(){
     if(execvp(args[0], args)== -1) 
     {
       //need to change to correct error handling
-      std::cerr << "Error could not execute "<< char_cmd_line << endl;
+      std::cerr << "smash error: " << char_cmd_line << ": invalid arguments" << std::endl;
+
     }
   }
   else
@@ -251,7 +252,7 @@ void ExternalCommand::execute(){
     if(execvp(args[0], args)==-1)
     {
       //need to change to correct error handling
-      std::cerr << "Error could not execute "<< char_cmd_line << endl;
+      std::cerr << "smash error: " << char_cmd_line << ": invalid arguments" << std::endl;
     }
     for (int j = 0; j < numberOfArgs; j++)
     {
