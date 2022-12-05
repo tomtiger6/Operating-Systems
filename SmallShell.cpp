@@ -63,7 +63,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 
 void SmallShell::executeCommand(const char *cmd_line) 
 {//NEED TO DO SPECIAL
-  int std_out_copy= 10;
+  int std_out_copy= 12;
   int fd=-1;
   if (*cmd_line == '\0'){
     return;
@@ -80,7 +80,8 @@ void SmallShell::executeCommand(const char *cmd_line)
       //last char is '>' which should be an error  
     }
     string dest=_trim( cmd_s.substr(redirect_pos_sec+1));
-    cmd_line=cmd_s.substr(0,redirect_pos).c_str();
+    const char * redirect_cmd=cmd_s.substr(0,redirect_pos).c_str();
+    //for debuging std::cout << "cmd is "<< redirect_cmd << endl;
     std_out_copy= dup(1);
     if (redirect_pos+1==redirect_pos_sec) 
     {//there is '>>' in the cmd line should append
@@ -88,9 +89,17 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
     else if (redirect_pos==redirect_pos_sec)
     {//else there is only '>' in the cmd line should overwrite.
-      fd=open(dest.c_str(), O_RDWR | O_CREAT , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
+      FILE* my_file=fopen(dest.c_str(), "w");
+      fd=fileno(my_file);
+      //fd=open(dest.c_str(),  O_RDWR | O_CREAT , S_IRUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //should fiind put what access mode the file should have.
     }
     dup2(fd,1);
+    SmallShell& bobby = SmallShell::getInstance();
+    bobby.executeCommand(redirect_cmd);
+    close(fd);
+    dup2(std_out_copy,1);
+    close(std_out_copy);
+    return;
   }
   size_t pipe_pos=cmd_s.find_first_of('|');
   if(pipe_pos!=string::npos)
@@ -169,12 +178,12 @@ void SmallShell::executeCommand(const char *cmd_line)
   }
 
 
-  if (fd!=-1)
-  {
-    close(fd);
-    dup2(std_out_copy,1);
-    close(std_out_copy);
-  }
+  // if (fd!=-1)
+  // {
+  //   close(fd);
+  //   dup2(std_out_copy,1);
+  //   close(std_out_copy);
+  // }
 }
 
 
