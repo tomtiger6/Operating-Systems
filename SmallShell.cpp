@@ -72,6 +72,7 @@ void SmallShell::executeCommand(const char *cmd_line)
   if (*cmd_line == '\0'){
     return;
   }
+  std::string orig = cmd_line;
   string cmd_s = _trim(string(cmd_line));
   string firstWord = cmd_s.substr(0, cmd_s.find_first_of(" \n"));
   size_t redirect_pos=cmd_s.find_first_of('>');
@@ -164,11 +165,11 @@ void SmallShell::executeCommand(const char *cmd_line)
     pid_t son_pid = fork();
     if (son_pid){//dad
       if (is_background){
-        (this -> m_jobs).addJob(cmd_line, son_pid);
+        (this -> m_jobs).addJob(orig, son_pid);
       } else  {
         this -> m_is_foreground_in_list = false;
         this -> m_current_foreground_pid = son_pid;
-        this -> m_current_foreground_cmd = cmd_line;
+        this -> m_current_foreground_cmd = orig;
         waitpid(son_pid, NULL, WUNTRACED);//might need to pause son until we get here. SO if a ctr-c or ctr-z is sent then fg_pid is updated.
         this -> m_current_foreground_pid = 0;
       }
