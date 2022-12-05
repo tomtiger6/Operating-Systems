@@ -101,16 +101,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     if (fd<0) 
       {
         perror("smash error: open failed");
-        // if (errno== EACCES)
-        // {
-        //   std::cerr << << std::endl;
-        // }
-        // if (errno== ENOENT)
-        // {
-        //   std::cerr << "smash error: open failed: No such file or directory"<< std::endl;
-        // }
         return;
-        //other problems with opning a file?
       }
     dup2(fd,1);
     SmallShell& bobby = SmallShell::getInstance();
