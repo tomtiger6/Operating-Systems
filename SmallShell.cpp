@@ -103,16 +103,8 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
     if (fd<0) 
       {
-        if (errno== EACCES)
-        {
-          std::cerr << "smash error: open failed: Permission denied"<< std::endl;
-        }
-        if (errno== ENOENT)
-        {
-          std::cerr << "smash error: open failed: No such file or directory"<< std::endl;
-        }
+        perror("smash error: open failed");
         return;
-        //other problems with opning a file?
       }
     dup2(fd,1);
     SmallShell& bobby = SmallShell::getInstance();
@@ -148,7 +140,7 @@ void SmallShell::executeCommand(const char *cmd_line)
       close(pipe_arr[0]);
       std_out_copy= dup(STDIN_FILENO);
       SmallShell& bobby = SmallShell::getInstance();
-      bobby.executeCommand((cmd_end + " " + read_stdin()).c_str());
+      bobby.executeCommand((cmd_end).c_str());
       exit(0);
     }
     else 
