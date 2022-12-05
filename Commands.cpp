@@ -266,7 +266,7 @@ void ExternalCommand::execute(){
 }
 
 
-void FareCommand::execute{
+void FareCommand::execute(){
 
 
 
