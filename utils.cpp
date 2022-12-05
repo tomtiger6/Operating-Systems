@@ -91,7 +91,8 @@ bool isBuiltIn (const std::string my_str)
    std::string my_str_2 = my_str.substr(0,my_str.find_last_of('&'));
    const char * word = my_str_2.c_str();
     if ((strcmp(word,"chprompt")==0) || (strcmp(word,"showpid")==0) || (strcmp(word,"pwd")==0) || (strcmp(word,"cd")==0) || 
-    (strcmp(word,"jobs")==0) || (strcmp(word,"fg")==0) || (strcmp(word,"bg")==0) || (strcmp(word,"quit")==0) || (strcmp(word,"kill")==0)) {
+    (strcmp(word,"jobs")==0) || (strcmp(word,"fg")==0) || (strcmp(word,"bg")==0) || (strcmp(word,"quit")==0) || (strcmp(word,"kill")==0)
+    || (strcmp(word,"fare")==0)) {
         return true;
     }
     return false;
@@ -111,6 +112,19 @@ bool is_number(const std::string& stringy)
   }
   return ((!stringy.empty()) && (iter == stringy.end()));
 }
+
+
+bool is_pos_number(const std::string& stringy)
+{
+  std::string::const_iterator iter = stringy.begin();
+
+  while(iter != stringy.end() && std::isdigit(*iter)){
+    iter++;
+  }
+  return ((!stringy.empty()) && (iter == stringy.end()));
+}
+
+
 
 
 bool is_dashed_number(const std::string& stringy){

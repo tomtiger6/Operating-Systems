@@ -59,6 +59,9 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   if (firstWord.compare("kill") == 0) {
     return new KillCommand(cmd_line_noamp, &(this -> m_jobs));
   }
+  if (firstWord.compare("fare") == 0) {
+    return new FareCommand(cmd_line_noamp, &(this -> m_jobs));
+  }
   return new ExternalCommand(cmd_line, &(this -> m_jobs));
 } 
 
@@ -180,7 +183,21 @@ void SmallShell::executeCommand(const char *cmd_line)
     pid_t son_pid = fork();
     if (son_pid){//dad
       if (!firstWord.compare("timeout")){
-        std::string comvo1 = (orig.substr(orig.find_first_of(" \n"))).substr(0,orig.find_first_of(" \n"));
+        if (cmd_s.find_first_of(" \n") == std::string::npos){
+          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          return;
+        }
+        std::string comvo1 = (_trim(cmd_s.substr(cmd_s.find_first_of(" \n"))));
+        if (comvo1.empty() || !is_pos_number(comvo1.substr(0, comvo1.find_first_of(" \n")))){
+          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          return;
+        }
+        if (comvo1.find_first_of(" \n") == std::string::npos){
+          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          return;
+        }
+        comvo1 = _trim(comvo1.substr(0, comvo1.find_first_of(" \n")));
+        
         this -> m_timed_cmds.addAlarm(son_pid, stoi(comvo1));
       }
       if (is_background){
@@ -196,8 +213,20 @@ void SmallShell::executeCommand(const char *cmd_line)
       setpgrp();
       std::string comvo2 = cmd_line;
       if (!firstWord.compare("timeout")){
-        comvo2 = _trim(cmd_s.substr(cmd_s.find_first_of(" \n")));
-        comvo2 = _trim(comvo2.substr(comvo2.find_first_of(" \n")));                  
+        if (cmd_s.find_first_of(" \n") == std::string::npos){
+          exit(0);
+        }
+        comvo2 = (_trim(cmd_s.substr(cmd_s.find_first_of(" \n"))));
+        if (comvo2.empty() || !is_pos_number(comvo2.substr(0, comvo2.find_first_of(" \n")))){
+          exit(0);
+        }
+        if (comvo2.find_first_of(" \n") == std::string::npos){
+          exit(0);
+        }
+        comvo2 = _trim(comvo2.substr(comvo2.find_first_of(" \n")));
+        if (comvo2.empty()){
+          exit(0);
+        }                  
       }
       const char* cmd_line_new = comvo2.c_str();
       Command* cmd = this -> CreateCommand(cmd_line_new);

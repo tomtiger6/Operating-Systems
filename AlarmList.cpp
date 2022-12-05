@@ -6,13 +6,21 @@ void AlarmList::handleAlarm(){
     pid_t process_id = (*iter).m_process_id;
     m_list.erase(iter);
     alarm((*(m_list.begin())).m_expiration - time(NULL));
-    JobsList::JobEntry* job = SmallShell::getInstance().m_jobs.getJobByProcess(process_id);
-    if (job != nullptr){//process didn't finish
+    SmallShell& bobby = SmallShell::getInstance();
+    JobsList::JobEntry* job = bobby.m_jobs.getJobByProcess(process_id);
+    if (job != nullptr ){//process didn't finish
       if (kill(process_id, SIGKILL)){
         perror("smash error: kill failed");
-    } else  {
-      std::cout << "smash: "   << job -> m_cmd_line <<  " timed out!" << std::endl;
+      } else  {
+        std::cout << "smash: "   << job -> m_cmd_line <<  " timed out!" << std::endl;
+      }
     }
+    else if (bobby.m_current_foreground_pid){
+      if (kill(process_id, SIGKILL)){
+        perror("smash error: kill failed");
+      } else  {
+        std::cout << "smash: "   << bobby.m_current_foreground_cmd <<  " timed out!" << std::endl;
+      }
     }
   }
 

@@ -42,6 +42,8 @@ QuitCommand::QuitCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(c
 
 KillCommand::KillCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), m_jobs(jobs){}
 
+FareCommand::FareCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
+
 void ShowPidCommand::execute(){
   std::cout << "smash pid is "<< getpid()<< std::endl;
 }
@@ -259,6 +261,14 @@ void ExternalCommand::execute(){
       free(args[j]);
     }
   }
+
+  
+}
+
+
+void FareCommand::execute{
+
+
 
   
 }

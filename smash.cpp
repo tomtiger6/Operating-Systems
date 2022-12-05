@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
 
 
     //TODO: setup sig alarm handler
-
     SmallShell& smash = SmallShell::getInstance();
     while(true) {
         std::cout << smash.m_command_prompt << "> ";

@@ -31,6 +31,8 @@ bool is_number(const std::string& stringy);
 
 bool is_dashed_number(const std::string& stringy);
 
+bool is_pos_number(const std::string& stringy);
+
 string read_stdin ();
 
 
