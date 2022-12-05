@@ -83,6 +83,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     if (redirect_pos_sec+1>cmd_s.length())
     {
       //last char is '>' which should be an error  
+      std::cerr << "smash error: " << cmd_line << ": invalid arguments" << std::endl;
     }
     string dest=_trim( cmd_s.substr(redirect_pos_sec+1));
     string redirect_cmd=(cmd_s.substr(0,redirect_pos));
@@ -111,6 +112,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     if (pipe_pos+1>cmd_s.length())
     {
     //last char is '|' which should be an error  
+      std::cerr << "smash error: " << cmd_line << ": invalid arguments" << std::endl;
 
     }
     string cmd_end=cmd_s.substr(pipe_pos+1,cmd_s.length());
