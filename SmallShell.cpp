@@ -85,8 +85,7 @@ void SmallShell::executeCommand(const char *cmd_line)
       //last char is '>' which should be an error  
     }
     string dest=_trim( cmd_s.substr(redirect_pos_sec+1));
-    const char * redirect_cmd=cmd_s.substr(0,redirect_pos).c_str();
-    //for debuging std::cout << "cmd is "<< redirect_cmd << endl;
+    string redirect_cmd=(cmd_s.substr(0,redirect_pos));
     std_out_copy= dup(1);
     if (redirect_pos+1==redirect_pos_sec) 
     {//there is '>>' in the cmd line should append
@@ -100,7 +99,7 @@ void SmallShell::executeCommand(const char *cmd_line)
     }
     dup2(fd,1);
     SmallShell& bobby = SmallShell::getInstance();
-    bobby.executeCommand(redirect_cmd);
+    bobby.executeCommand(redirect_cmd.c_str());
     close(fd);
     dup2(std_out_copy,1);
     close(std_out_copy);
