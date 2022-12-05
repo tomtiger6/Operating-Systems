@@ -18,13 +18,6 @@ class SmallShell;
 
 
 
-
-
-
-
-
-
-
 class Command {
 public:
   std::string m_cmd_line;

@@ -161,9 +161,14 @@ void SmallShell::executeCommand(const char *cmd_line)
     cmd -> execute();
     delete cmd;
   } else  {//EXTERNAL // or timeout
+    
     bool is_background = _isBackgroundComamnd(cmd_line);
     pid_t son_pid = fork();
     if (son_pid){//dad
+      if (!firstWord.compare("timeout")){
+        std::string comvo1 = (orig.substr(orig.find_first_of(" \n"))).substr(0,orig.find_first_of(" \n"));
+        this -> m_timed_cmds.addAlarm(son_pid, stoi(comvo1));
+      }
       if (is_background){
         (this -> m_jobs).addJob(orig, son_pid);
       } else  {
@@ -175,7 +180,13 @@ void SmallShell::executeCommand(const char *cmd_line)
       }
     } else  {//forked process
       setpgrp();
-      Command* cmd = this -> CreateCommand(cmd_line);
+      std::string comvo2 = cmd_line;
+      if (!firstWord.compare("timeout")){
+        comvo2 = _trim(cmd_s.substr(cmd_s.find_first_of(" \n")));
+        comvo2 = _trim(comvo2.substr(comvo2.find_first_of(" \n")));                  
+      }
+      const char* cmd_line_new = comvo2.c_str();
+      Command* cmd = this -> CreateCommand(cmd_line_new);
       cmd -> execute();
       delete cmd;
       exit(0);

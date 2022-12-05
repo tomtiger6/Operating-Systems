@@ -42,5 +42,7 @@ void ctrlCHandler(int sig_num) {
 }
 
 void alarmHandler(int sig_num) {
-  // TODO: Add your implementation
+  std::cout <<  "smash: got an alarm" << std::endl;
+  SmallShell& bobby = SmallShell::getInstance();
+  bobby.m_timed_cmds.handleAlarm();
 }

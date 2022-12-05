@@ -42,6 +42,7 @@ class JobsList {
   JobEntry * getLastJob(int* lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
   void removeFinishedJobs();
+  JobEntry* getJobByProcess(pid_t process_id);
 
   /*Finds job Id in the list and resets its timer, and puts it in stopped mode*/
   void rePushJob(int job_id);

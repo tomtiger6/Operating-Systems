@@ -2,9 +2,9 @@
 SUBMITTERS := 325310431_316528033
 COMPILER := g++
 COMPILER_FLAGS := --std=c++11 -Wall
-SRCS := Commands.cpp signals.cpp smash.cpp Jobs.cpp SmallShell.cpp utils.cpp
+SRCS := Commands.cpp signals.cpp smash.cpp Jobs.cpp SmallShell.cpp utils.cpp AlarmList.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
-HDRS := Commands.h signals.h Jobs.h SmallShell.h utils.h
+HDRS := Commands.h signals.h Jobs.h SmallShell.h utils.h AlarmList.h
 TESTS_INPUTS := $(wildcard test_input*.txt)
 TESTS_OUTPUTS := $(subst input,output,$(TESTS_INPUTS))
 SMASH_BIN := smash

@@ -4,6 +4,9 @@
 
 #include "Jobs.h"
 #include "Commands.h"
+#include "AlarmList.h"
+
+
 
 
 
@@ -15,6 +18,7 @@ class SmallShell {
   std::string m_oldPwd ;
   std::string m_command_prompt ;
   JobsList m_jobs;
+  AlarmList m_timed_cmds;
 
 
   pid_t m_current_foreground_pid;

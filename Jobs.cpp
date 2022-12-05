@@ -124,6 +124,18 @@ void JobsList::killAllJobsAndPrint(){
   }
 }
 
+JobsList::JobEntry* JobsList::getJobByProcess(pid_t process_id){
+  this -> removeFinishedJobs();
+  std::vector<JobEntry>::iterator iter;
+  for (iter = m_jobs.begin() ; iter < m_jobs.end(); iter++){
+    if (((*iter).m_process_id) == process_id){
+      return &(*iter);
+    } 
+  }
+  return nullptr;
+}
+
+
 
 
 std::ostream& operator<<(std::ostream& os, const JobsList::JobEntry& job)
