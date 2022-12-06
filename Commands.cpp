@@ -10,6 +10,9 @@
 #include "Jobs.h"
 #include "SmallShell.h"
 #include "AlarmList.h"
+#include <fcntl.h>
+#include <fstream>
+
 
 using namespace std;
 
@@ -56,10 +59,7 @@ void ChpromptCommand::execute(){
   } else  {
     *(this -> m_prompt) = string(arr[1]);
   }
-  for (int i = 0; i < numberOfArgs; i++)
-  {
-    free(arr[i]);
-  }
+  freeAndRet(arr,numberOfArgs);
 }
 
 void GetCurrDirCommand::execute()
@@ -139,9 +139,7 @@ void ForegroundCommand::execute(){
     waitpid(job -> m_process_id, NULL, WUNTRACED);
     this -> m_smash -> m_current_foreground_pid = 0;
   }
-  for (int i = 0; i < numberOfArgs; i++){
-    free(arr[i]);
-  }
+  freeAndRet(arr,numberOfArgs);
 }
 
 void BackgroundCommand::execute(){
@@ -175,9 +173,7 @@ void BackgroundCommand::execute(){
     }
     job -> m_is_stopped = false;
   }
-  for (int i = 0; i < numberOfArgs; i++){
-    free(arr[i]);
-  }
+  freeAndRet(arr,numberOfArgs);
 }
 
 void QuitCommand::execute(){
@@ -212,9 +208,7 @@ void KillCommand::execute(){
       std::cout << "signal number "    <<  sig<<" was sent to pid "<< receiver <<std::endl;
     }
   }
-  for (int i = 0; i < numberOfArgs; i++){
-    free(arr[i]);
-  }
+  freeAndRet(arr,numberOfArgs);
 }
 
 
@@ -256,19 +250,54 @@ void ExternalCommand::execute(){
       //need to change to correct error handling
       std::cerr << "smash error: " << char_cmd_line << ": invalid arguments" << std::endl;
     }
-    for (int j = 0; j < numberOfArgs; j++)
-    {
-      free(args[j]);
-    }
+    freeAndRet(args,numberOfArgs);
   }
-
-  
 }
 
 
 void FareCommand::execute(){
-
-
-
-  
+  char* arr[COMMAND_MAX_ARGS];
+  int numberOfArgs= _parseCommandLine((this->m_cmd_line).c_str(),arr);
+  if (numberOfArgs != 4) {
+    std::cerr << "smash error: fare: invalid arguments" << std::endl;
+  } else  {
+    std::ifstream orig(arr[1]);
+    std::string temp_name = "YamAndTomWereHere." + string(arr[1]);
+    int temp_file = open(temp_name.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0655);
+    if (!orig || temp_file == -1) {
+      perror("smash error: open failed");
+    } else  {
+      std::stringstream buffer;
+      buffer << orig.rdbuf();
+      orig.close();
+      std::string source(arr[2]), destination(arr[3]), line;
+      int counter = 0;
+      while (getline(buffer, line)) {  
+        size_t index = 0;
+        while ((index = line.find(source, index)) != std::string::npos) {
+          counter++;
+          line.replace(index, source.length(), destination);
+          index += destination.length();
+        }
+        line += '\n';
+        int status = write(temp_file, line.c_str(), line.length());
+        if (status == -1 || (unsigned int)status != line.length()){
+          perror("smash error: write failed");
+          remove(temp_name.c_str());
+          freeAndRet(arr,numberOfArgs);
+          return;
+        }
+      }
+      if (rename(temp_name.c_str(), arr[1]) == -1) {
+        perror("smash error: rename failed");
+        remove(temp_name.c_str());
+        freeAndRet(arr,numberOfArgs);
+        return;
+      }
+      std::cout << "replaced " << counter << " instances of the string \"" << arr[2] << "\"" << std::endl;
+      close(temp_file);
+      
+    }
+  }
+  freeAndRet(arr,numberOfArgs);
 }

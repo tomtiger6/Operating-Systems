@@ -17,10 +17,10 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 
 #if 0
 #define FUNC_ENTRY()  \
-  cout << __PRETTY_FUNCTION__ << " --> " << endl;
+  cout << __PRETTY_FUNCTION__ << " --> " << std::endl;
 
 #define FUNC_EXIT()  \
-  cout << __PRETTY_FUNCTION__ << " <-- " << endl;
+  cout << __PRETTY_FUNCTION__ << " <-- " << std::endl;
 #else
 #define FUNC_ENTRY()
 #define FUNC_EXIT()

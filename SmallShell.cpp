@@ -176,16 +176,16 @@ void SmallShell::executeCommand(const char *cmd_line)
     if (son_pid){//dad
       if (!firstWord.compare("timeout")){
         if (cmd_s.find_first_of(" \n") == std::string::npos){
-          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          std::cerr << "smash error:> " << "\"" <<orig<<"\"" <<std::endl;
           return;
         }
         std::string comvo1 = (_trim(cmd_s.substr(cmd_s.find_first_of(" \n"))));
         if (comvo1.empty() || !is_pos_number(comvo1.substr(0, comvo1.find_first_of(" \n")))){
-          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          std::cerr << "smash error:> " << "\"" <<orig<<"\"" <<std::endl;
           return;
         }
         if (comvo1.find_first_of(" \n") == std::string::npos){
-          std::cerr << "smash error: timeout: invalid arguments" <<std::endl;
+          std::cerr << "smash error:> " << "\"" <<orig<<"\"" <<std::endl;
           return;
         }
         comvo1 = _trim(comvo1.substr(0, comvo1.find_first_of(" \n")));
